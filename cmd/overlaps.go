@@ -15,16 +15,16 @@ var overlapsCmd = &cobra.Command{
 		if len(args) != 2 {
 			logrus.Fatal("Provide 2 cidr ranges")
 		}
-		n1, err := core.ParseCIDR(args[0])
+		network1, err := core.ParseCIDR(args[0])
 		if err != nil {
 			logrus.Error(err)
 		}
-		n2, err := core.ParseCIDR(args[1])
+		network2, err := core.ParseCIDR(args[1])
 		if err != nil {
 			logrus.Error(err)
 		}
-		doesOverlap := overlaps(n1, n2)
-		logrus.Info(doesOverlap)
+		networksOverlap := overlaps(network1, network2)
+		logrus.Info(networksOverlap)
 	},
 }
 
@@ -32,7 +32,7 @@ func init() {
 	rootCmd.AddCommand(overlapsCmd)
 }
 
-func overlaps(n1, n2 *net.IPNet) bool {
-	overlaps := core.Overlaps(n1, n2)
+func overlaps(network1, network2 *net.IPNet) bool {
+	overlaps := core.Overlaps(network1, network2)
 	return overlaps
 }
