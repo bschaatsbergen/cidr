@@ -10,7 +10,7 @@ var countCmd = &cobra.Command{
 	Use:   "count",
 	Short: "Returns the number of host addresses within the given cidr range",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
+		if len(args) != 1 {
 			logrus.Fatal("Provide a cidr range")
 		}
 		count(args[0])
