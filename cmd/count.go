@@ -6,19 +6,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var countCmd = &cobra.Command{
-	Use:   "count",
-	Short: "Returns the number of host addresses within the given cidr range",
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			logrus.Fatal("Provide a cidr range")
-		}
-		count(args[0])
-	},
-}
+var (
+	OutputFile string
+	countCmd   = &cobra.Command{
+		Use:   "count",
+		Short: "Returns the number of host addresses within the given cidr range",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) != 1 {
+				logrus.Fatal("Provide a cidr range")
+			}
+			count(args[0])
+		},
+	}
+)
 
 func init() {
 	rootCmd.AddCommand(countCmd)
+	countCmd.Flags().StringVarP(&OutputFile, "out", "o", "hosts.json", "output all host addresses in a json file")
 }
 
 func count(arg string) {
