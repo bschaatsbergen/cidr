@@ -9,8 +9,6 @@ import (
 )
 
 var (
-	OutputFile string
-
 	containsCmd = &cobra.Command{
 		Use:   "contains",
 		Short: "Checks whether a given ip address is part of a cidr range",
