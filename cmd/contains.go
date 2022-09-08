@@ -16,15 +16,15 @@ var (
 			if len(args) != 2 {
 				logrus.Fatal("Provide an ip address and a cidr range")
 			}
-			networkAddress, err := core.ParseCIDR(args[0])
+			network, err := core.ParseCIDR(args[0])
 			if err != nil {
 				logrus.Fatal(err)
 			}
-			ipAddress := core.ParseIP(args[1])
-			if ipAddress == nil {
+			ip := core.ParseIP(args[1])
+			if ip == nil {
 				logrus.Fatal("Provided ip is not valid")
 			}
-			networkContainsIP := contains(networkAddress, ipAddress)
+			networkContainsIP := contains(network, ip)
 			logrus.Info(networkContainsIP)
 		},
 	}
@@ -34,7 +34,7 @@ func init() {
 	rootCmd.AddCommand(containsCmd)
 }
 
-func contains(networkAddress *net.IPNet, ipAddress net.IP) bool {
-	contains := core.ContainsAddress(networkAddress, ipAddress)
+func contains(network *net.IPNet, ip net.IP) bool {
+	contains := core.ContainsAddress(network, ip)
 	return contains
 }
