@@ -12,7 +12,7 @@ var containsCmd = &cobra.Command{
 	Use:   "contains",
 	Short: "Checks whether a given ip address is part of a cidr range",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 2 {
+		if len(args) != 2 {
 			logrus.Fatal("Provide an ip address and a cidr range")
 		}
 		networkAddress, err := core.ParseCIDR(args[0])
