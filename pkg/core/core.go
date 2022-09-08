@@ -4,27 +4,27 @@ import (
 	"net"
 )
 
-func AddressCount(n *net.IPNet) uint64 {
-	prefixLen, bits := n.Mask.Size()
+func AddressCount(network *net.IPNet) uint64 {
+	prefixLen, bits := network.Mask.Size()
 	return 1 << (uint64(bits) - uint64(prefixLen))
 }
 
-func ParseCIDR(n string) (*net.IPNet, error) {
-	_, ip, err := net.ParseCIDR(n)
+func ParseCIDR(network string) (*net.IPNet, error) {
+	_, ip, err := net.ParseCIDR(network)
 	if err != nil {
 		return nil, err
 	}
 	return ip, err
 }
 
-func ParseIP(i string) net.IP {
-	return net.ParseIP(i)
+func ParseIP(ip string) net.IP {
+	return net.ParseIP(ip)
 }
 
-func ContainsAddress(n *net.IPNet, i net.IP) bool {
-	return n.Contains(i)
+func ContainsAddress(network *net.IPNet, ip net.IP) bool {
+	return network.Contains(ip)
 }
 
-func Overlaps(n1, n2 *net.IPNet) bool {
-	return n1.Contains(n2.IP) || n2.Contains(n1.IP)
+func Overlaps(network1, network2 *net.IPNet) bool {
+	return network1.Contains(network2.IP) || network2.Contains(network1.IP)
 }
