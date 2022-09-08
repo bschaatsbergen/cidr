@@ -13,7 +13,7 @@ var countCmd = &cobra.Command{
 		if len(args) < 1 {
 			logrus.Fatal("cidr range argument is required")
 		}
-		main(args[0])
+		count(args[0])
 	},
 }
 
@@ -21,13 +21,11 @@ func init() {
 	rootCmd.AddCommand(countCmd)
 }
 
-func main(arg string) {
+func count(arg string) {
 	network, err := core.ParseCIDR(arg)
 	if err != nil {
 		logrus.Error(err)
 	}
-
 	count := core.AddressCount(network)
-
 	logrus.Infof("%s contains %d distinct host addresses", network, count)
 }
