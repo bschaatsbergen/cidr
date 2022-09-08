@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"net"
+
 	"github.com/bschaatsbergen/cidr/pkg/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -15,7 +17,13 @@ var (
 			if len(args) != 1 {
 				logrus.Fatal("Provide a cidr range")
 			}
-			count(args[0])
+			network, err := core.ParseCIDR(args[0])
+			if err != nil {
+				logrus.Fatal("Provide a valid cidr range")
+			}
+			hostAddressCount := count(network)
+			logrus.Infof("contains %d host addresses", hostAddressCount)
+
 		},
 	}
 )
@@ -25,11 +33,7 @@ func init() {
 	countCmd.Flags().StringVarP(&OutputFile, "out", "o", "hosts.json", "output all host addresses in a json file")
 }
 
-func count(arg string) {
-	network, err := core.ParseCIDR(arg)
-	if err != nil {
-		logrus.Fatal("Provide a valid cidr range")
-	}
+func count(network *net.IPNet) uint64 {
 	count := core.AddressCount(network)
-	logrus.Infof("contains %d host addresses", count)
+	return count
 }
