@@ -24,6 +24,7 @@ var (
 )
 
 func init() {
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	rootCmd.PersistentFlags().BoolVarP(&FlagStore.Debug, "debug", "d", false, "set log level to debug")
 }
 
