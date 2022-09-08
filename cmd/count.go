@@ -27,5 +27,5 @@ func count(arg string) {
 		logrus.Fatal("Provide a valid cidr range")
 	}
 	count := core.AddressCount(network)
-	logrus.Infof("%s contains %d distinct host addresses", network, count)
+	logrus.Infof("contains %d host addresses", count)
 }
