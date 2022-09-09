@@ -9,10 +9,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	containsExample = "# Check whether an IPv4 CIDR range contains a given IPv4 address\n" +
+		"cidr contains 10.0.0.0/16 10.0.14.5\n" +
+		"\n" +
+		"# Check whether an IPv6 CIDR range contains a given IPv6 address\n" +
+		"cidr contains 2001:db8:1234:1a00::/106 2001:db8:1234:1a00::\n"
+)
+
 var (
 	containsCmd = &cobra.Command{
-		Use:   "contains",
-		Short: "Checks whether an IP address belongs to a CIDR range",
+		Use:     "contains",
+		Short:   "Checks whether an IP address belongs to a CIDR range",
+		Example: containsExample,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) != 2 {
 				fmt.Println("error: provide a CIDR range and an IP address")
