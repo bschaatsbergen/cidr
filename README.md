@@ -1,7 +1,7 @@
 # cidr
 [![Release](https://github.com/bschaatsbergen/cidr/actions/workflows/goreleaser.yaml/badge.svg)](https://github.com/bschaatsbergen/cidr/actions/workflows/goreleaser.yaml)
 
-A cross platform CLI to perform various operations on a CIDR range.
+A CLI to perform various actions on CIDR ranges
 
 ## Brew
 To install cidr using brew, simply do the below.
@@ -15,9 +15,9 @@ brew install cidr
 You can download the [latest binary](https://github.com/bschaatsbergen/cidr/releases/latest) for Linux, MacOS, and Windows.
 
 
-## Usage
+## Examples
 
-Foobar
+Using `cidr` is very simple.
 
 ### Check whether an address belongs to a CIDR range
 
@@ -66,3 +66,8 @@ This also works with IPv6 addresses, for example:
 $ cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96
 true
 ``` 
+
+## Contributing
+
+Contributions are highly appreciated and always welcome. 
+Have a look through existing [Issues](https://github.com/bschaatsbergen/cidr/issues) and [Pull Requests](https://github.com/bschaatsbergen/cidr/pulls) that you could help with.
