@@ -9,8 +9,7 @@ import (
 )
 
 var (
-	OutputFile string
-	countCmd   = &cobra.Command{
+	countCmd = &cobra.Command{
 		Use:   "count",
 		Short: "Return the count of distinct host addresses in a given CIDR range",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -30,7 +29,6 @@ var (
 
 func init() {
 	rootCmd.AddCommand(countCmd)
-	countCmd.Flags().StringVarP(&OutputFile, "out", "o", "hosts.json", "output all host addresses in a json file")
 }
 
 func count(network *net.IPNet) uint64 {
