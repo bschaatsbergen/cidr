@@ -10,7 +10,7 @@ import (
 
 var overlapsCmd = &cobra.Command{
 	Use:   "overlaps",
-	Short: "Checks whether 2 cidr ranges overlap",
+	Short: "Checks if a CIDR range overlaps with another CIDR range",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 2 {
 			logrus.Fatal("Provide 2 cidr ranges")
