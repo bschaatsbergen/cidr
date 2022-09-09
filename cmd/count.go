@@ -1,10 +1,11 @@
 package cmd
 
 import (
+	"fmt"
 	"net"
+	"os"
 
 	"github.com/bschaatsbergen/cidr/pkg/core"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -14,14 +15,16 @@ var (
 		Short: "Return the count of distinct host addresses in a given CIDR range",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) != 1 {
-				logrus.Fatal("Provide a cidr range")
+				fmt.Println("Provide a cidr range")
+				os.Exit(1)
 			}
 			network, err := core.ParseCIDR(args[0])
 			if err != nil {
-				logrus.Fatal("Provide a valid cidr range")
+				fmt.Println("Provide a valid cidr range")
+				os.Exit(1)
 			}
 			hostAddressCount := count(network)
-			logrus.Infof("contains %d host addresses", hostAddressCount)
+			fmt.Println(hostAddressCount)
 
 		},
 	}

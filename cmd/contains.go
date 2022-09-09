@@ -1,10 +1,11 @@
 package cmd
 
 import (
+	"fmt"
 	"net"
+	"os"
 
 	"github.com/bschaatsbergen/cidr/pkg/core"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -14,18 +15,21 @@ var (
 		Short: "Checks whether an IP address belongs to a CIDR range",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) != 2 {
-				logrus.Fatal("Provide an ip address and a cidr range")
+				fmt.Println("Provide an IP address and a CIDR range")
+				os.Exit(1)
 			}
 			network, err := core.ParseCIDR(args[0])
 			if err != nil {
-				logrus.Fatal(err)
+				fmt.Println(err)
+				os.Exit(1)
 			}
 			ip := core.ParseIP(args[1])
 			if ip == nil {
-				logrus.Fatal("Provided ip is not valid")
+				fmt.Println("Provided ip is not valid")
+				os.Exit(1)
 			}
 			networkContainsIP := contains(network, ip)
-			logrus.Info(networkContainsIP)
+			fmt.Println(networkContainsIP)
 		},
 	}
 )
