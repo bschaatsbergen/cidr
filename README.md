@@ -12,7 +12,7 @@ brew install cidr
 ```
 
 ## Binaries
-You can download the [latest binary](https://github.com/bschaatsbergn/cidr/releases/latest) for Linux, MacOS, and Windows.
+You can download the [latest binary](https://github.com/bschaatsbergen/cidr/releases/latest) for Linux, MacOS, and Windows.
 
 
 ## Usage
