@@ -1,0 +1,41 @@
+project_name: "cidr"
+
+# before are hooks that will be run before any builds are done, so good to put install scripts and stuff that your builds need here
+before:
+  hooks:
+    # Remove unused packaged from the build process
+    - go mod tidy
+    - go generate
+
+builds:
+  - main: ./main.go
+    binary: cidr
+    goos: ["linux", "darwin", "windows"]
+    goarch: ["386", "amd64"]
+    ldflags:
+      - -s -w -X "github.com/bschaatsbergen/cidr/cmd.version={{.Version}}"
+    env:
+      - CGO_ENABLED=0
+
+changelog:
+  sort: "asc"
+  filters:
+    exclude: ["^docs:", "demo", "^hugo:", "Merge pull request", "Merge branch"]
+
+brews:
+  - tap:
+      owner: bschaatsbergen
+      name: homebrew-cidr
+    name: cidr
+    homepage: "https://github.com/bschaatsbergen/cidr"
+    description: "ntest is a cross-platform cli app that runs multiple tests against any address."
+    license: "MIT"
+    skip_upload: auto
+    commit_author:
+      name: Bruno Schaatsbergen
+      email: git@bschaatsbergen.com
+    folder: Formula
+    install: |-
+      bin.install "cidr"
+    test: |
+      system "#{bin}/cidr -v"
