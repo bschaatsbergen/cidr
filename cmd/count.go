@@ -9,10 +9,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	countExample = "# Return the count of all distinct host addresses within a given IPv4 CIDR range\n" +
+		"cidr count 10.0.0.0/16\n" +
+		"\n" +
+		"# Return the count of all distinct host addresses within a given IPv6 CIDR range\n" +
+		"cidr count 2001:db8:1234:1a00::/106\n"
+)
+
 var (
 	countCmd = &cobra.Command{
-		Use:   "count",
-		Short: "Return the count of distinct host addresses in a given CIDR range",
+		Use:     "count",
+		Short:   "Return the count of all distinct host addresses in a given CIDR range",
+		Example: countExample,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) != 1 {
 				fmt.Println("error: provide a CIDR range")
