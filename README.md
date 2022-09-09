@@ -1,5 +1,5 @@
 # cidr
-![release](https://github.com/bschaatsbergn/cidr/workflows/goreleaser/badge.svg?branch=main)
+[![Release](https://github.com/bschaatsbergen/cidr/actions/workflows/goreleaser.yaml/badge.svg?branch=main)](https://github.com/bschaatsbergen/cidr/actions/workflows/goreleaser.yaml)
 
 A cross platform CLI to perform various operations on a CIDR range.
 
