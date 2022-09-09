@@ -9,23 +9,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	helperLog = "See 'cidr contains -h' for help and examples"
+)
+
 var (
 	containsCmd = &cobra.Command{
 		Use:   "contains",
 		Short: "Checks whether an IP address belongs to a CIDR range",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) != 2 {
-				fmt.Println("Provide an IP address and a CIDR range")
+				fmt.Print("error: provide an IP address and a CIDR range")
+				fmt.Println(helperLog)
 				os.Exit(1)
 			}
 			network, err := core.ParseCIDR(args[0])
 			if err != nil {
-				fmt.Println(err)
+				fmt.Printf("error: %s\n", err)
+				fmt.Println(helperLog)
 				os.Exit(1)
 			}
 			ip := core.ParseIP(args[1])
 			if ip == nil {
-				fmt.Println("Provided ip is not valid")
+				fmt.Printf("error: invalid IP address: %s\n", args[1])
+				fmt.Println(helperLog)
 				os.Exit(1)
 			}
 			networkContainsIP := contains(network, ip)
