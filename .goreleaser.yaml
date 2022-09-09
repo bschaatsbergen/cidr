@@ -28,7 +28,7 @@ brews:
       name: homebrew-cidr
     name: cidr
     homepage: "https://github.com/bschaatsbergen/cidr"
-    description: "ntest is a cross-platform cli app that runs multiple tests against any address."
+    description: "A CLI to perform various actions on CIDR ranges"
     license: "MIT"
     skip_upload: auto
     commit_author:
