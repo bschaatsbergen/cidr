@@ -44,7 +44,7 @@ $ cidr count 10.0.0.0/16
 65534
 ```
 
-Or with an edge case:
+Or with large prefixes like point-to-point links:
 
 ```
 $ cidr count count 172.16.18.0/31
