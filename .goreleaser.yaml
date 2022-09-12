@@ -11,7 +11,7 @@ builds:
   - main: ./main.go
     binary: cidr
     goos: ["linux", "darwin", "windows"]
-    goarch: ["386", "amd64"]
+    goarch: ["386", "amd64", "arm64"]
     ldflags:
       - -s -w -X "github.com/bschaatsbergen/cidr/cmd.version={{.Version}}"
     env:
