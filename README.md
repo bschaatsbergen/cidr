@@ -33,7 +33,7 @@ This also works with IPv6 addresses, for example:
 ```
 $ cidr contains 2001:db8:1234:1a00::/106 2001:db8:1234:1a00::
 true
-``` 
+```
 
 ### Count distinct host addresses
 
@@ -41,15 +41,22 @@ To get all distinct host addresses part of a given CIDR range:
 
 ```
 $ cidr count 10.0.0.0/16
-65536
+65534
 ```
 
-This also works with IPv6 addresses, for example:
+Or with an edge case:
+
+```
+$ cidr count count 172.16.18.0/31
+2
+```
+
+This also works with very small CIDR ranges, like a point-to-point link:
 
 ```
 $ cidr count 2001:db8:1234:1a00::/106
 4194304
-``` 
+```
 
 ### CIDR range intersection
 
@@ -65,9 +72,9 @@ This also works with IPv6 addresses, for example:
 ```
 $ cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96
 true
-``` 
+```
 
 ## Contributing
 
-Contributions are highly appreciated and always welcome. 
+Contributions are highly appreciated and always welcome.
 Have a look through existing [Issues](https://github.com/bschaatsbergen/cidr/issues) and [Pull Requests](https://github.com/bschaatsbergen/cidr/pulls) that you could help with.
