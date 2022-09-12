@@ -44,18 +44,18 @@ $ cidr count 10.0.0.0/16
 65534
 ```
 
-Or with large prefixes like point-to-point links:
-
-```
-$ cidr count count 172.16.18.0/31
-2
-```
-
-This also works with very small CIDR ranges, like a point-to-point link:
+This also works with a IPv6 CIDR range, for example:
 
 ```
 $ cidr count 2001:db8:1234:1a00::/106
 4194304
+```
+
+Or with a large prefix like a point-to-point link CIDR range:
+
+```
+$ cidr count count 172.16.18.0/31
+2
 ```
 
 ### CIDR range intersection
@@ -67,7 +67,7 @@ $ cidr overlaps 10.0.0.0/16 10.0.14.0/22
 true
 ```
 
-This also works with IPv6 addresses, for example:
+This also works with IPv6 CIDR ranges, for example:
 
 ```
 $ cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96
