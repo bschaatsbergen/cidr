@@ -54,7 +54,7 @@ $ cidr count 2001:db8:1234:1a00::/106
 Or with a large prefix like a point-to-point link CIDR range:
 
 ```
-$ cidr count count 172.16.18.0/31
+$ cidr count 172.16.18.0/31
 2
 ```
 
