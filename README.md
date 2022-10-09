@@ -48,7 +48,7 @@ This also works with a IPv6 CIDR range, for example:
 
 ```
 $ cidr count 2001:db8:1234:1a00::/106
-4194304
+4194302
 ```
 
 Or with a large prefix like a point-to-point link CIDR range:

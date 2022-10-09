@@ -34,7 +34,7 @@ var (
 				fmt.Println("See 'cidr contains -h' for help and examples")
 				os.Exit(1)
 			}
-			ip := core.ParseIP(args[1])
+			ip := net.ParseIP(args[1])
 			if ip == nil {
 				fmt.Printf("error: invalid IP address: %s\n", args[1])
 				fmt.Println("See 'cidr contains -h' for help and examples")

@@ -11,13 +11,15 @@ func AddressCount(network *net.IPNet) uint64 {
 	if network.Mask != nil {
 		// Handle edge cases
 		switch prefixLen {
-			case 32: return 1
-			case 31: return 2
+		case 32:
+			return 1
+		case 31:
+			return 2
 		}
 	}
 
 	// Remember to subtract the network address and broadcast address
-	return 1 << (uint64(bits) - uint64(prefixLen)) - 2
+	return 1<<(uint64(bits)-uint64(prefixLen)) - 2
 }
 
 func ParseCIDR(network string) (*net.IPNet, error) {
@@ -26,10 +28,6 @@ func ParseCIDR(network string) (*net.IPNet, error) {
 		return nil, err
 	}
 	return ip, err
-}
-
-func ParseIP(ip string) net.IP {
-	return net.ParseIP(ip)
 }
 
 func ContainsAddress(network *net.IPNet, ip net.IP) bool {
