@@ -26,6 +26,12 @@ func TestAddressCount(t *testing.T) {
 		t.Fail()
 	}
 
+	largestIPv4PrefixCIDR, err := ParseCIDR("172.16.18.0/32")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
 	tests := []struct {
 		name          string
 		cidr          *net.IPNet
@@ -45,6 +51,11 @@ func TestAddressCount(t *testing.T) {
 			name:          "Return the count of all distinct host addresses in an uncommon (large prefix) IPv4 CIDR",
 			cidr:          largeIPv4PrefixCIDR,
 			expectedCount: 2,
+		},
+		{
+			name:          "Return the count of all distinct host addresses in an uncommon (largest prefix) IPv4 CIDR",
+			cidr:          largestIPv4PrefixCIDR,
+			expectedCount: 1,
 		},
 	}
 	for _, tt := range tests {
@@ -114,7 +125,59 @@ func TestOverlaps(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			overlaps := Overlaps(tt.cidrA, tt.cidrB)
-			assert.Equal(t, tt.overlaps, overlaps, "Foobar")
+			assert.Equal(t, tt.overlaps, overlaps, "Given CIDRs should overlap")
+		})
+	}
+}
+
+func TestContainsAddress(t *testing.T) {
+	IPv4CIDR, err := ParseCIDR("10.0.0.0/16")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	IPv6CIDR, err := ParseCIDR("2001:db8:1234:1a00::/106")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	tests := []struct {
+		name     string
+		cidr     *net.IPNet
+		ip       net.IP
+		contains bool
+	}{
+		{
+			name:     "IPv4 CIDR that does contain an IPv4 IP",
+			cidr:     IPv4CIDR,
+			ip:       net.ParseIP("10.0.14.5"),
+			contains: true,
+		},
+		{
+			name:     "IPv4 CIDR that does NOT contain an IPv4 IP",
+			cidr:     IPv4CIDR,
+			ip:       net.ParseIP("10.1.55.5"),
+			contains: false,
+		},
+		{
+			name:     "IPv6 CIDR that does contain an IPv6 IP",
+			cidr:     IPv6CIDR,
+			ip:       net.ParseIP("2001:db8:1234:1a00::"),
+			contains: true,
+		},
+		{
+			name:     "IPv6 CIDR that does NOT contain an IPv6 IP",
+			cidr:     IPv6CIDR,
+			ip:       net.ParseIP("2001:af1:1222:1a20::"),
+			contains: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			overlaps := ContainsAddress(tt.cidr, tt.ip)
+			assert.Equal(t, tt.contains, overlaps, "Given IP address should be part of the given CIDR")
 		})
 	}
 }
