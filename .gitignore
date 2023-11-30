@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+cidr
 
 # cidr binary
 ./cobra
