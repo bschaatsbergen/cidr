@@ -28,7 +28,7 @@ brews:
       name: homebrew-cidr
     name: cidr
     homepage: "https://github.com/bschaatsbergen/cidr"
-    description: "A CLI to perform various actions on CIDR ranges"
+    description: "CLI to perform various actions on CIDR ranges"
     license: "MIT"
     skip_upload: auto
     commit_author:
