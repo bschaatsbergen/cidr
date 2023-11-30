@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+cidr
 
 # cidr binary
 ./cobra
@@ -16,4 +17,3 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-cidr
