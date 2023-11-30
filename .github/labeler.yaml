@@ -1,0 +1,13 @@
+github-actions:
+- '.github/*'
+- '.goreleaser.yaml'
+
+dependencies: 
+- 'go.mod'
+- 'go.sum'
+
+documentation:
+- 'README.md'
+
+legal:
+- 'LICENSE'
