@@ -1,7 +1,7 @@
 # cidr
 [![Release](https://github.com/bschaatsbergen/cidr/actions/workflows/goreleaser.yaml/badge.svg)](https://github.com/bschaatsbergen/cidr/actions/workflows/goreleaser.yaml) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/bschaatsbergen/cidr) ![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/bschaatsbergen/cidr/latest) [![Go Reference](https://pkg.go.dev/badge/github.com/bschaatsbergen/cidr.svg)](https://pkg.go.dev/github.com/bschaatsbergen/cidr)
 
-A CLI to perform various actions on CIDR ranges
+CLI to perform various actions on CIDR ranges
 
 ## Brew
 To install cidr using brew, simply do the below.
