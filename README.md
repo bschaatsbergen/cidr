@@ -7,7 +7,6 @@ A CLI to perform various actions on CIDR ranges
 To install cidr using brew, simply do the below.
 
 ```sh
-brew tap bschaatsbergen/cidr
 brew install cidr
 ```
 
