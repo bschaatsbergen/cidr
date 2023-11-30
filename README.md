@@ -4,7 +4,7 @@
 CLI to perform various actions on CIDR ranges
 
 ## Brew
-To install cidr using brew, simply do the below.
+To install cidr using brew, simply run:
 
 ```sh
 brew install cidr
