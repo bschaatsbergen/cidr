@@ -181,3 +181,8 @@ func TestContainsAddress(t *testing.T) {
 		})
 	}
 }
+
+func TestParseCIDRError(t *testing.T) {
+	_, err := ParseCIDR("")
+	assert.Error(t, err, "Should return an error when given an empty string")
+}
