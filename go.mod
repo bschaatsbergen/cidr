@@ -1,6 +1,6 @@
 module github.com/bschaatsbergen/cidr
 
-go 1.19
+go 1.21.4
 
 require github.com/spf13/cobra v1.8.0
 
