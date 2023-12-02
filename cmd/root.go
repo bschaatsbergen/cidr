@@ -3,7 +3,9 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +22,20 @@ var (
 	}
 )
 
+func setupCobraUsageTemplate() {
+	cobra.AddTemplateFunc("StyleHeading", color.New(color.FgBlue).SprintFunc())
+	usageTemplate := rootCmd.UsageTemplate()
+	usageTemplate = strings.NewReplacer(
+		`Usage:`, `{{StyleHeading "Usage:"}}`,
+		`Examples:`, `{{StyleHeading "Examples:"}}`,
+		`Available Commands:`, `{{StyleHeading "Available Commands:"}}`,
+		`Flags:`, `{{StyleHeading "Flags:"}}`,
+	).Replace(usageTemplate)
+	rootCmd.SetUsageTemplate(usageTemplate)
+}
+
 func init() {
+	setupCobraUsageTemplate()
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }
 
