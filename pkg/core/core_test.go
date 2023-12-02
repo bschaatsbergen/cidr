@@ -182,7 +182,45 @@ func TestContainsAddress(t *testing.T) {
 	}
 }
 
-func TestParseCIDRError(t *testing.T) {
-	_, err := ParseCIDR("")
-	assert.Error(t, err, "Should return an error when given an empty string")
+func TestParseCIDR(t *testing.T) {
+	tests := []struct {
+		name    string
+		cidrStr string
+		wantErr bool
+	}{
+		{
+			name:    "Parse a valid IPv4 CIDR",
+			cidrStr: "10.0.0.0/16",
+			wantErr: false,
+		},
+		{
+			name:    "Parse a valid IPv6 CIDR",
+			cidrStr: "2001:db8:1234:1a00::/106",
+			wantErr: false,
+		},
+		{
+			name:    "Parse an invalid IPv4 CIDR",
+			cidrStr: "356.356.356.356/16",
+			wantErr: true,
+		},
+		{
+			name:    "Parse an invalid IPv6 CIDR",
+			cidrStr: "2001:db8:1234:1a00::/129",
+			wantErr: true,
+		},
+		{
+			name:    "Parse an empty CIDR",
+			cidrStr: "",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := ParseCIDR(tt.cidrStr)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ParseCIDR() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
 }
