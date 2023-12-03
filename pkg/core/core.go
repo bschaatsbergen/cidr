@@ -37,3 +37,24 @@ func ContainsAddress(network *net.IPNet, ip net.IP) bool {
 func Overlaps(network1, network2 *net.IPNet) bool {
 	return network1.Contains(network2.IP) || network2.Contains(network1.IP)
 }
+
+func ListCIDR(network string) ([]string, error) {
+	var hosts []string
+	ip, ipnet, err := net.ParseCIDR(network)
+	if err != nil {
+		return nil, err
+	}
+	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); increment(ip) {
+		hosts = append(hosts, ip.String())
+	}
+	return hosts, nil
+}
+
+func increment(ip net.IP) {
+	for i := len(ip) - 1; i >= 0; i-- {
+		ip[i]++
+		if ip[i] != 0 {
+			break
+		}
+	}
+}
