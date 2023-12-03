@@ -14,7 +14,7 @@ const (
 		"cidr contains 10.0.0.0/16 10.0.14.5\n" +
 		"\n" +
 		"# Check whether an IPv6 CIDR range contains a given IPv6 address\n" +
-		"cidr contains 2001:db8:1234:1a00::/106 2001:db8:1234:1a00::\n"
+		"cidr contains 2001:db8:1234:1a00::/106 2001:db8:1234:1a00::"
 )
 
 var (

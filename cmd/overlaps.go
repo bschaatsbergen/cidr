@@ -14,7 +14,7 @@ const (
 		"cidr overlaps 10.0.0.0/16 10.0.14.0/22\n" +
 		"\n" +
 		"# Check whether 2 IPv6 CIDR ranges overlap\n" +
-		"cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96\n"
+		"cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96"
 )
 
 var overlapsCmd = &cobra.Command{

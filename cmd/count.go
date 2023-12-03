@@ -14,7 +14,7 @@ const (
 		"cidr count 10.0.0.0/16\n" +
 		"\n" +
 		"# Return the count of all distinct host addresses within a given IPv6 CIDR range\n" +
-		"cidr count 2001:db8:1234:1a00::/106\n"
+		"cidr count 2001:db8:1234:1a00::/106"
 )
 
 var (
