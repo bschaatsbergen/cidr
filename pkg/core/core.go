@@ -25,7 +25,6 @@ func GetAddressCount(network *net.IPNet) uint64 {
 }
 
 // ParseCIDR parses the given CIDR notation string and returns the corresponding IP network.
-// It utilizes the net.ParseCIDR function and returns an error if parsing fails.
 func ParseCIDR(network string) (*net.IPNet, error) {
 	_, ip, err := net.ParseCIDR(network)
 	if err != nil {
