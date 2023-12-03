@@ -1,0 +1,38 @@
+# Visit https://golangci-lint.run/ for usage documentation and information on other useful linters
+issues:
+  max-per-linter: 0
+  max-same-issues: 0
+
+  exclude-rules:
+    # disable funlen for test funcs
+    - source: "^func Test"
+      linters:
+        - funlen
+
+linters:
+  disable-all: true
+  enable:
+    - bidichk
+    - durationcheck
+    - decorder
+    - dogsled
+    - errcheck
+    - exportloopref
+    - forcetypeassert
+    - funlen
+    - godot
+    - godox
+    - gofmt
+    - gosimple
+    - goconst
+    - ineffassign
+    - makezero
+    - misspell
+    - nilerr
+    - predeclared
+    - staticcheck
+    - tenv
+    - unconvert
+    - unparam
+    - unused
+    - vet
