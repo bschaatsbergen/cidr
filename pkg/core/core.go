@@ -4,12 +4,14 @@ import (
 	"net"
 )
 
-func AddressCount(network *net.IPNet) uint64 {
+// GetAddressCount returns the number of usable addresses in the given IP network.
+// It considers the network type (IPv4 or IPv6) and handles edge cases for specific prefix lengths.
+// The result excludes the network address and broadcast address.
+func GetAddressCount(network *net.IPNet) uint64 {
 	prefixLen, bits := network.Mask.Size()
 
-	// Check if network is IPv4 or IPv6
-	if network.Mask != nil {
-		// Handle edge cases
+	// Handle edge cases for specific IPv4 prefix lengths.
+	if network.Mask != nil && network.IP.To4() != nil {
 		switch prefixLen {
 		case 32:
 			return 1
@@ -18,10 +20,11 @@ func AddressCount(network *net.IPNet) uint64 {
 		}
 	}
 
-	// Remember to subtract the network address and broadcast address
+	// Subtract the network address and broadcast address (2) from the total number of addresses.
 	return 1<<(uint64(bits)-uint64(prefixLen)) - 2
 }
 
+// ParseCIDR parses the given CIDR notation string and returns the corresponding IP network.
 func ParseCIDR(network string) (*net.IPNet, error) {
 	_, ip, err := net.ParseCIDR(network)
 	if err != nil {
@@ -30,10 +33,14 @@ func ParseCIDR(network string) (*net.IPNet, error) {
 	return ip, err
 }
 
+// ContainsAddress checks if the given IP network contains the specified IP address.
+// It returns true if the address is within the network, otherwise false.
 func ContainsAddress(network *net.IPNet, ip net.IP) bool {
 	return network.Contains(ip)
 }
 
+// Overlaps checks if there is an overlap between two IP networks.
+// It returns true if there is any overlap, otherwise false.
 func Overlaps(network1, network2 *net.IPNet) bool {
 	return network1.Contains(network2.IP) || network2.Contains(network1.IP)
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddressCount(t *testing.T) {
+func TestGetAddressCount(t *testing.T) {
 	IPv4CIDR, err := ParseCIDR("10.0.0.0/16")
 	if err != nil {
 		t.Log(err)
@@ -60,7 +60,7 @@ func TestAddressCount(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			count := AddressCount(tt.cidr)
+			count := GetAddressCount(tt.cidr)
 			assert.Equal(t, int(tt.expectedCount), int(count), "Both address counts should be equal")
 		})
 	}
