@@ -43,6 +43,6 @@ func init() {
 }
 
 func list(network *net.IPNet) uint64 {
-	count := core.AddressCount(network)
+	count := core.GetAddressCount(network)
 	return count
 }
