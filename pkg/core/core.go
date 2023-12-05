@@ -7,6 +7,15 @@ import (
 	"github.com/bschaatsbergen/cidr/pkg/helper"
 )
 
+// ParseCIDR parses the given CIDR notation string and returns the corresponding IP network.
+func ParseCIDR(network string) (*net.IPNet, error) {
+	_, ip, err := net.ParseCIDR(network)
+	if err != nil {
+		return nil, err
+	}
+	return ip, err
+}
+
 // GetAddressCount returns the number of usable addresses in the given IP network.
 // It considers the network type (IPv4 or IPv6) and handles edge cases for specific prefix lengths.
 // The result excludes the network address and broadcast address.
@@ -25,15 +34,6 @@ func GetAddressCount(network *net.IPNet) uint64 {
 
 	// Subtract the network address and broadcast address (2) from the total number of addresses.
 	return 1<<(uint64(bits)-uint64(prefixLen)) - 2
-}
-
-// ParseCIDR parses the given CIDR notation string and returns the corresponding IP network.
-func ParseCIDR(network string) (*net.IPNet, error) {
-	_, ip, err := net.ParseCIDR(network)
-	if err != nil {
-		return nil, err
-	}
-	return ip, err
 }
 
 // ContainsAddress checks if the given IP network contains the specified IP address.
@@ -57,6 +57,47 @@ func GetNetMask(network *net.IPNet) net.IP {
 // GetBaseAddress returns the base address of the given IP network.
 func GetBaseAddress(network *net.IPNet) net.IP {
 	return network.IP
+}
+
+// GetLastUsableIPAddress returns the last usable IP address in the given IP network.
+func GetLastUsableIPAddress(network *net.IPNet) (net.IP, error) {
+	// If it's an IPv6 network
+	if network.IP.To4() == nil {
+		ones, bits := network.Mask.Size()
+		if ones == bits {
+			return nil, errors.New("IPv6 network has no last address")
+		}
+
+		// The last address is the last usable address
+		lastIP := make(net.IP, len(network.IP))
+		copy(lastIP, network.IP)
+		for i := range lastIP {
+			lastIP[i] |= ^network.Mask[i]
+		}
+
+		return lastIP, nil
+	}
+
+	// If it's an IPv4 network, first handle edge cases
+	switch ones, _ := network.Mask.Size(); ones {
+	case 32:
+		return nil, errors.New("IPv4 network has no last address")
+	case 31:
+		// For /31 network, the other address is the last usable address
+		lastIP := make(net.IP, len(network.IP))
+		copy(lastIP, network.IP)
+		lastIP[3] |= 1 // Flip the last bit to get the other address
+		return lastIP, nil
+	default:
+		// Subtract 1 from the broadcast address to get the last usable address
+		ip := make(net.IP, len(network.IP))
+		for i := range ip {
+			ip[i] = network.IP[i] | ^network.Mask[i]
+		}
+		ip[3]-- // Subtract 1 from the last octet
+
+		return ip, nil
+	}
 }
 
 // GetBroadcastAddress returns the broadcast address of the given IPv4 network, or an error if the IP network is IPv6.
