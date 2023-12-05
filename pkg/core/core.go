@@ -3,6 +3,8 @@ package core
 import (
 	"errors"
 	"net"
+
+	"github.com/bschaatsbergen/cidr/pkg/helper"
 )
 
 // GetAddressCount returns the number of usable addresses in the given IP network.
@@ -62,6 +64,11 @@ func GetBroadcastAddress(network *net.IPNet) (net.IP, error) {
 	if network.IP.To4() == nil {
 		// IPv6 networks do not have broadcast addresses.
 		return nil, errors.New(IPv6HasNoBroadcastAddressError)
+	}
+
+	if prefixLen, _ := network.Mask.Size(); helper.ContainsInt([]int{31, 32}, prefixLen) {
+		// Handle edge case for /31 and /32 networks as they have no broadcast address.
+		return nil, errors.New(IPv4PrefixHasNoBroadcastAddressError)
 	}
 
 	ip := make(net.IP, len(network.IP))
