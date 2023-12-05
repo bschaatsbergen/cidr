@@ -15,9 +15,13 @@ var (
 	rootCmd = &cobra.Command{
 		Use:     "cidr",
 		Short:   "cidr - CLI to perform various actions on CIDR ranges",
-		Version: version, // The version is set during the build by making using of `go build -ldflags`
+		Version: version, // The version is set during the build by making using of `go build -ldflags`.
 		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Help()
+			err := cmd.Help()
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
 		},
 	}
 )
