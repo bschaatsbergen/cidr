@@ -28,14 +28,11 @@ var (
 				fmt.Println("See 'cidr list -h' for help and examples")
 				os.Exit(1)
 			}
-			addresses, err := core.ListCIDR(args[0])
+			err := core.ListCIDR(args[0])
 			if err != nil {
 				fmt.Printf("error: invalid CIDR range: %s\n", args[0])
 				fmt.Println("See 'cidr list -h' for help and examples")
 				os.Exit(1)
-			}
-			for _, addr := range addresses {
-				fmt.Printf("%+v\n", addr)
 			}
 		},
 	}
