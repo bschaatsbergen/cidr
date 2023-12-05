@@ -1,6 +1,7 @@
 package core
 
 import (
+	"errors"
 	"net"
 )
 
@@ -43,4 +44,30 @@ func ContainsAddress(network *net.IPNet, ip net.IP) bool {
 // It returns true if there is any overlap, otherwise false.
 func Overlaps(network1, network2 *net.IPNet) bool {
 	return network1.Contains(network2.IP) || network2.Contains(network1.IP)
+}
+
+// GetNetMask returns the netmask of the given IP network.
+func GetNetMask(network *net.IPNet) net.IP {
+	netMask := net.IP(network.Mask)
+	return netMask
+}
+
+// GetBaseAddress returns the base address of the given IP network.
+func GetBaseAddress(network *net.IPNet) net.IP {
+	return network.IP
+}
+
+// GetBroadcastAddress returns the broadcast address of the given IPv4 network, or an error if the IP network is IPv6.
+func GetBroadcastAddress(network *net.IPNet) (net.IP, error) {
+	if network.IP.To4() == nil {
+		// IPv6 networks do not have broadcast addresses.
+		return nil, errors.New(IPv6HasNoBroadcastAddressError)
+	}
+
+	ip := make(net.IP, len(network.IP))
+	for i := range ip {
+		ip[i] = network.IP[i] | ^network.Mask[i]
+	}
+
+	return ip, nil
 }

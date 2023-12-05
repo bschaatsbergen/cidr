@@ -182,6 +182,80 @@ func TestContainsAddress(t *testing.T) {
 	}
 }
 
+func TestGetNetMask(t *testing.T) {
+	IPv4CIDR, err := ParseCIDR("10.0.0.0/16")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	IPv6CIDR, err := ParseCIDR("2001:db8:1234:1a00::/106")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	tests := []struct {
+		name            string
+		cidr            *net.IPNet
+		expectedNetMask net.IP
+	}{
+		{
+			name:            "Get the netmask of an IPv4 CIDR",
+			cidr:            IPv4CIDR,
+			expectedNetMask: net.IP(net.IP{0xff, 0xff, 0x0, 0x0}),
+		},
+		{
+			name:            "Get the netmask of an IPv6 CIDR",
+			cidr:            IPv6CIDR,
+			expectedNetMask: net.IP(net.IP{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc0, 0x0, 0x0}),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			netMask := GetNetMask(tt.cidr)
+			assert.Equal(t, tt.expectedNetMask, netMask, "Netmask is not correct")
+		})
+	}
+}
+
+func TestGetBaseAddress(t *testing.T) {
+	IPv4CIDR, err := ParseCIDR("192.168.90.4/30")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	IPv6CIDR, err := ParseCIDR("4a00:db8:1234:1a00::/127")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	tests := []struct {
+		name                string
+		cidr                *net.IPNet
+		expectedBaseAddress net.IP
+	}{
+		{
+			name:                "Get the base address of an IPv4 CIDR",
+			cidr:                IPv4CIDR,
+			expectedBaseAddress: IPv4CIDR.IP,
+		},
+		{
+			name:                "Get the base address of an IPv6 CIDR",
+			cidr:                IPv6CIDR,
+			expectedBaseAddress: IPv6CIDR.IP,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			baseAddress := GetBaseAddress(tt.cidr)
+			assert.Equal(t, tt.expectedBaseAddress, baseAddress, "Base address is not correct")
+		})
+	}
+}
+
 func TestParseCIDR(t *testing.T) {
 	tests := []struct {
 		name    string
