@@ -11,3 +11,6 @@ documentation:
 
 legal:
 - 'LICENSE'
+
+tests:
+- '**/*_test.go'
