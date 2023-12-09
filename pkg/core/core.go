@@ -150,7 +150,7 @@ func GetBroadcastAddress(network *net.IPNet) (net.IP, error) {
 
 	// Handle edge case for /31 and /32 networks as they have no broadcast address.
 	if prefixLen, _ := network.Mask.Size(); helper.ContainsInt([]int{31, 32}, prefixLen) {
-		return nil, errors.New(IPv4PrefixHasNoBroadcastAddressError)
+		return nil, errors.New(IPv4HasNoBroadcastAddressError)
 	}
 
 	ip := make(net.IP, len(network.IP))
