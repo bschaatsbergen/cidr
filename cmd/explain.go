@@ -108,6 +108,8 @@ func getNetworkDetails(network *net.IPNet) *networkDetailsToDisplay {
 
 //nolint:goconst
 func explain(details *networkDetailsToDisplay) {
+	var lengthIndicator string
+
 	fmt.Printf(color.BlueString("Base Address:\t\t ")+"%s\n", details.BaseAddress)
 	if !details.UsableAddressRangeHasError {
 		fmt.Printf(color.BlueString("Usable Address Range:\t ")+"%s to %s\n", details.FirstUsableIPAddress, details.LastUsableIPAddress)
@@ -120,5 +122,12 @@ func explain(details *networkDetailsToDisplay) {
 		fmt.Printf(color.RedString("Broadcast Address:\t ")+"%s\n", details.BroadcastAddress)
 	}
 	fmt.Printf(color.BlueString("Address Count:\t\t ")+"%s\n", details.Count)
-	fmt.Printf(color.BlueString("Netmask:\t\t ")+"%s (/%d bits)\n", details.Netmask, details.PrefixLength)
+
+	if details.PrefixLength > 1 {
+		lengthIndicator = "bits"
+	} else {
+		lengthIndicator = "bit"
+	}
+
+	fmt.Printf(color.BlueString("Netmask:\t\t ")+"%s (/%d %s)\n", details.Netmask, details.PrefixLength, lengthIndicator)
 }
