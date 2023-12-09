@@ -240,7 +240,7 @@ func TestGetNetMask(t *testing.T) {
 		expectedNetmask net.IPMask
 	}{
 		{
-			name:            "Get the netmask of an IPv6 CIDR range",
+			name:            "Get the netmask of an IPv4 CIDR range",
 			CIDR:            IPv4CIDR,
 			expectedNetmask: net.IPMask{0xff, 0xff, 0x00, 0x00},
 		},
