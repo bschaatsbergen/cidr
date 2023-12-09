@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/bschaatsbergen/cidr/pkg/core"
+	"github.com/bschaatsbergen/cidr/pkg/helper"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"golang.org/x/text/language"
@@ -28,8 +29,8 @@ var (
 				fmt.Println("See 'cidr contains -h' for help and examples")
 				os.Exit(1)
 			}
-			broadcastAddress, netmask, prefixLength, baseAdress, count, firstUsableIPAddress, lastUsableIPAddress := getNetworkDetails(network)
-			explain(broadcastAddress, netmask, prefixLength, baseAdress, count, firstUsableIPAddress, lastUsableIPAddress)
+			details := getNetworkDetails(network)
+			explain(details)
 		},
 	}
 )
@@ -38,56 +39,86 @@ func init() {
 	rootCmd.AddCommand(explainCmd)
 }
 
-func getNetworkDetails(network *net.IPNet) (string, string, string, string, string, string, string) {
-	// Broadcast address
-	var broadcastAddress string
+type networkDetailsToDisplay struct {
+	IsIPV4Network              bool
+	IsIPV6Network              bool
+	BroadcastAddress           string
+	BroadcastAddressHasError   bool
+	Netmask                    net.IP
+	PrefixLength               int
+	BaseAddress                net.IP
+	Count                      string
+	UsableAddressRangeHasError bool
+	FirstUsableIPAddress       string
+	LastUsableIPAddress        string
+}
 
+func getNetworkDetails(network *net.IPNet) *networkDetailsToDisplay {
+	details := &networkDetailsToDisplay{}
+
+	// Determine whether the network is an IPv4 or IPv6 network.
+	if helper.IsIPv4Network(network) {
+		details.IsIPV4Network = true
+	} else if helper.IsIPv6Network(network) {
+		details.IsIPV6Network = true
+	}
+
+	// Obtain the broadcast address, handling errors if they occur.
 	ipBroadcast, err := core.GetBroadcastAddress(network)
 	if err != nil {
-		broadcastAddress = err.Error()
+		// Set error flags and store the error message so that it can be displayed later.
+		details.BroadcastAddressHasError = true
+		details.BroadcastAddress = err.Error()
 	} else {
-		broadcastAddress = ipBroadcast.String()
+		details.BroadcastAddress = ipBroadcast.String()
 	}
 
-	// Netmask
-	netmask := core.GetNetMask(network)
-	prefixLength := core.GetPrefixLength(netmask)
+	// Obtain the netmask and prefix length.
+	details.Netmask = core.GetNetMask(network)
+	details.PrefixLength = core.GetPrefixLength(details.Netmask)
 
-	// Base address
-	baseAddress := core.GetBaseAddress(network)
+	// Obtain the base address of the network.
+	details.BaseAddress = core.GetBaseAddress(network)
 
-	// Address count
-	var count string
-	addressCount := core.GetAddressCount(network)
-	// Produce a human readable number
-	count = message.NewPrinter(language.English).Sprintf("%d", addressCount)
+	// Obtain the total count of addresses in the network.
+	count := core.GetAddressCount(network)
+	// Format the count as a human-readable string and store it in the details struct.
+	details.Count = message.NewPrinter(language.English).Sprintf("%d", count)
 
-	// First usable IP address
-	var firstUsableIPAddress string
+	// Obtain the first and last usable IP addresses, handling errors if they occur.
 	firstUsableIP, err := core.GetFirstUsableIPAddress(network)
 	if err != nil {
-		firstUsableIPAddress = err.Error()
+		// Set error flags if an error occurs during the retrieval of the first usable IP address.
+		details.UsableAddressRangeHasError = true
 	} else {
-		firstUsableIPAddress = firstUsableIP.String()
+		details.FirstUsableIPAddress = firstUsableIP.String()
 	}
 
-	// Last usable IP address
-	var lastUsableIPAddress string
 	lastUsableIP, err := core.GetLastUsableIPAddress(network)
 	if err != nil {
-		lastUsableIPAddress = err.Error()
+		// Set error flags if an error occurs during the retrieval of the last usable IP address.
+		details.UsableAddressRangeHasError = true
 	} else {
-		lastUsableIPAddress = lastUsableIP.String()
+		details.LastUsableIPAddress = lastUsableIP.String()
 	}
 
-	return broadcastAddress, netmask.String(), fmt.Sprint(prefixLength), baseAddress.String(), count, firstUsableIPAddress, lastUsableIPAddress
+	// Return the populated 'networkDetailsToDisplay' struct.
+	return details
 }
 
 //nolint:goconst
-func explain(broadcastAddress, netmask, prefixLength, baseAddress, count, firstUsableIPAddress, lastUsableIPAddress string) {
-	fmt.Printf(color.BlueString("Base Address:\t\t ")+"%s\n", baseAddress)
-	fmt.Printf(color.BlueString("Usable IP Address range: ")+"%s to %s\n", firstUsableIPAddress, lastUsableIPAddress)
-	fmt.Printf(color.BlueString("Broadcast Address:\t ")+"%s\n", broadcastAddress)
-	fmt.Printf(color.BlueString("Address Count:\t\t ")+"%s\n", count)
-	fmt.Printf(color.BlueString("Netmask:\t\t ")+"%s (/%s bits)\n", netmask, prefixLength)
+func explain(details *networkDetailsToDisplay) {
+	fmt.Printf(color.BlueString("Base Address:\t\t ")+"%s\n", details.BaseAddress)
+	if !details.UsableAddressRangeHasError {
+		fmt.Printf(color.BlueString("Usable Address Range:\t ")+"%s to %s\n", details.FirstUsableIPAddress, details.LastUsableIPAddress)
+	} else {
+		fmt.Printf(color.RedString("Usable Address Range:\t ")+"%s\n", "unable to calculate usable address range")
+	}
+	if !details.BroadcastAddressHasError && details.IsIPV4Network {
+		fmt.Printf(color.BlueString("Broadcast Address:\t ")+"%s\n", details.BroadcastAddress)
+	} else if details.BroadcastAddressHasError && details.IsIPV4Network {
+		fmt.Printf(color.RedString("Broadcast Address:\t ")+"%s\n", details.BroadcastAddress)
+	}
+	fmt.Printf(color.BlueString("Address Count:\t\t ")+"%s\n", details.Count)
+	fmt.Printf(color.BlueString("Netmask:\t\t ")+"%s (/%d bits)\n", details.Netmask, details.PrefixLength)
 }
