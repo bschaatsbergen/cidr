@@ -73,6 +73,29 @@ $ cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96
 true
 ```
 
+### To get more information about a CIDR range
+
+You can simply use the `explain` subcommand:
+
+```
+$ cidr explain 10.0.0.0/16
+Base Address:            10.0.0.0
+Usable Address Range:    10.0.0.1 to 10.0.255.254
+Broadcast Address:       10.0.255.255
+Address Count:           65,534
+Netmask:                 255.255.0.0 (/16 bits)
+```
+
+This also works with IPv6 CIDR ranges, for example:
+
+```
+$ cidr explain 2001:db8:1234:1a00::/64
+Base Address:            2001:db8:1234:1a00::
+Usable Address Range:    2001:db8:1234:1a00:: to 2001:db8:1234:1a00:ffff:ffff:ffff:ffff
+Address Count:           18,446,744,073,709,551,614
+Netmask:                 ffff:ffff:ffff:ffff:: (/64 bits)
+```
+
 ## Contributing
 
 Contributions are highly appreciated and always welcome.
