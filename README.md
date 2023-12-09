@@ -73,9 +73,9 @@ $ cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96
 true
 ```
 
-### To get more information about a CIDR range
+### Get details about a CIDR range
 
-You can simply use the `explain` subcommand:
+To get more information on a CIDR range:
 
 ```
 $ cidr explain 10.0.0.0/16
