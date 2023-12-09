@@ -83,6 +83,7 @@ func getNetworkDetails(network *net.IPNet) (string, string, string, string, stri
 	return broadcastAddress, netmask.String(), fmt.Sprint(prefixLength), baseAddress.String(), count, firstUsableIPAddress, lastUsableIPAddress
 }
 
+//nolint:goconst
 func explain(broadcastAddress, netmask, prefixLength, baseAddress, count, firstUsableIPAddress, lastUsableIPAddress string) {
 	fmt.Printf(color.BlueString("Base Address:\t\t ")+"%s\n", baseAddress)
 	fmt.Printf(color.BlueString("Usable IP Address range: ")+"%s to %s\n", firstUsableIPAddress, lastUsableIPAddress)
