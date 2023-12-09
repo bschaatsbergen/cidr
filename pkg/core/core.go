@@ -48,10 +48,14 @@ func Overlaps(network1, network2 *net.IPNet) bool {
 	return network1.Contains(network2.IP) || network2.Contains(network1.IP)
 }
 
-// GetNetMask returns the netmask of the given IP network.
-func GetNetMask(network *net.IPNet) net.IP {
-	netMask := net.IP(network.Mask)
-	return netMask
+// GetNetmask returns the netmask of the given IP network.
+func GetNetmask(network *net.IPNet) net.IPMask {
+	return network.Mask
+}
+
+// NetMaskToIPAddress converts a netmask (net.IPMask) to its corresponding net.IP representation.
+func NetMaskToIPAddress(netmask net.IPMask) net.IP {
+	return net.IP(netmask)
 }
 
 // GetPrefixLength returns the prefix length from the given netmask.

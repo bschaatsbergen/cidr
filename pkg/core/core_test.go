@@ -198,25 +198,67 @@ func TestGetPrefixLength(t *testing.T) {
 
 	tests := []struct {
 		name                 string
-		netMask              net.IP
+		netmask              net.IP
 		expectedPrefixLength int
 	}{
 		{
 			name:                 "Get the prefix length of an IPv4 netmask",
-			netMask:              net.IP(IPv4CIDR.Mask),
+			netmask:              net.IP(IPv4CIDR.Mask),
 			expectedPrefixLength: 16,
 		},
 		{
 			name:                 "Get the prefix length of an IPv6 netmask",
-			netMask:              net.IP(IPv6CIDR.Mask),
+			netmask:              net.IP(IPv6CIDR.Mask),
 			expectedPrefixLength: 106,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			prefixLength := core.GetPrefixLength(tt.netMask)
+			prefixLength := core.GetPrefixLength(tt.netmask)
 			assert.Equal(t, tt.expectedPrefixLength, prefixLength, "Prefix length is not correct")
+		})
+	}
+}
+
+func TestGetNetMask(t *testing.T) {
+	IPv4CIDR, err := core.ParseCIDR("10.0.0.0/16")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	IPv6CIDR, err := core.ParseCIDR("2001:db8:1234:1a00::/106")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	tests := []struct {
+		name            string
+		CIDR            *net.IPNet
+		expectedNetmask net.IPMask
+	}{
+		{
+			name:            "Get the netmask of an IPv6 CIDR range",
+			CIDR:            IPv4CIDR,
+			expectedNetmask: net.IPMask{0xff, 0xff, 0x00, 0x00},
+		},
+		{
+			name:            "Get the netmask of an IPv6 CIDR range",
+			CIDR:            IPv6CIDR,
+			expectedNetmask: net.IPMask{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xc0, 0x0, 0x0},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			netmask := core.GetNetmask(tt.CIDR)
+			if err != nil {
+				t.Log(err)
+				t.Fail()
+			}
+			assert.Equal(t, tt.expectedNetmask, netmask, "Netmask is not correct")
 		})
 	}
 }
