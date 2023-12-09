@@ -18,6 +18,29 @@ You can download the [latest binary](https://github.com/bschaatsbergen/cidr/rele
 
 Using `cidr` is very simple.
 
+### Explain a CIDR range
+
+To get more information on a CIDR range:
+
+```
+$ cidr explain 10.0.0.0/16
+Base Address:            10.0.0.0
+Usable Address Range:    10.0.0.1 to 10.0.255.254
+Broadcast Address:       10.0.255.255
+Address Count:           65,534
+Netmask:                 255.255.0.0 (/16 bits)
+```
+
+This also works with IPv6 CIDR ranges, for example:
+
+```
+$ cidr explain 2001:db8:1234:1a00::/64
+Base Address:            2001:db8:1234:1a00::
+Usable Address Range:    2001:db8:1234:1a00:: to 2001:db8:1234:1a00:ffff:ffff:ffff:ffff
+Address Count:           18,446,744,073,709,551,614
+Netmask:                 ffff:ffff:ffff:ffff:: (/64 bits)
+```
+
 ### Check whether an address belongs to a CIDR range
 
 To check if a CIDR range contains an IP:
@@ -71,29 +94,6 @@ This also works with IPv6 CIDR ranges, for example:
 ```
 $ cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96
 true
-```
-
-### Get details about a CIDR range
-
-To get more information on a CIDR range:
-
-```
-$ cidr explain 10.0.0.0/16
-Base Address:            10.0.0.0
-Usable Address Range:    10.0.0.1 to 10.0.255.254
-Broadcast Address:       10.0.255.255
-Address Count:           65,534
-Netmask:                 255.255.0.0 (/16 bits)
-```
-
-This also works with IPv6 CIDR ranges, for example:
-
-```
-$ cidr explain 2001:db8:1234:1a00::/64
-Base Address:            2001:db8:1234:1a00::
-Usable Address Range:    2001:db8:1234:1a00:: to 2001:db8:1234:1a00:ffff:ffff:ffff:ffff
-Address Count:           18,446,744,073,709,551,614
-Netmask:                 ffff:ffff:ffff:ffff:: (/64 bits)
 ```
 
 ## Contributing
