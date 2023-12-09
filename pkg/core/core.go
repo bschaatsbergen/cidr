@@ -54,9 +54,50 @@ func GetNetMask(network *net.IPNet) net.IP {
 	return netMask
 }
 
+// GetPrefixLength returns the prefix length from the given netmask.
+func GetPrefixLength(netmask net.IP) int {
+	ones, _ := net.IPMask(netmask).Size()
+	return ones
+}
+
 // GetBaseAddress returns the base address of the given IP network.
 func GetBaseAddress(network *net.IPNet) net.IP {
 	return network.IP
+}
+
+// GetFirstUsableIPAddress returns the first usable IP address in the given IP network.
+func GetFirstUsableIPAddress(network *net.IPNet) (net.IP, error) {
+	// If it's an IPv6 network
+	if network.IP.To4() == nil {
+		ones, bits := network.Mask.Size()
+		if ones == bits {
+			return nil, errors.New(IPv6NetworkHasNoFirstUsableAddressError)
+		}
+
+		// The first address is the first usable address
+		firstIP := make(net.IP, len(network.IP))
+		copy(firstIP, network.IP)
+
+		return firstIP, nil
+	}
+
+	// If it's an IPv4 network, first handle edge cases
+	switch ones, _ := network.Mask.Size(); ones {
+	case 32:
+		return nil, errors.New(IPv4NetworkHasNoFirstUsableAddressError)
+	case 31:
+		// For /31 network, the current address is the only usable address
+		firstIP := make(net.IP, len(network.IP))
+		copy(firstIP, network.IP)
+		return firstIP, nil
+	default:
+		// Add 1 to the network address to get the first usable address
+		ip := make(net.IP, len(network.IP))
+		copy(ip, network.IP)
+		ip[3]++ // Add 1 to the last octet
+
+		return ip, nil
+	}
 }
 
 // GetLastUsableIPAddress returns the last usable IP address in the given IP network.
@@ -65,7 +106,7 @@ func GetLastUsableIPAddress(network *net.IPNet) (net.IP, error) {
 	if network.IP.To4() == nil {
 		ones, bits := network.Mask.Size()
 		if ones == bits {
-			return nil, errors.New("IPv6 network has no last address")
+			return nil, errors.New(IPv6NetworkHasNoLastUsableAddressError)
 		}
 
 		// The last address is the last usable address
@@ -81,7 +122,7 @@ func GetLastUsableIPAddress(network *net.IPNet) (net.IP, error) {
 	// If it's an IPv4 network, first handle edge cases
 	switch ones, _ := network.Mask.Size(); ones {
 	case 32:
-		return nil, errors.New("IPv4 network has no last address")
+		return nil, errors.New(IPv4NetworkHasNoLastUsableAddressError)
 	case 31:
 		// For /31 network, the other address is the last usable address
 		lastIP := make(net.IP, len(network.IP))
