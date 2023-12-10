@@ -1,16 +1,26 @@
 github-actions:
-- '.github/**'
-- '.goreleaser.yaml'
+  - changed-files:
+      - any-glob-to-any-file:
+        - '.github/**'
+        - '.goreleaser.yaml'
 
-dependencies: 
-- 'go.mod'
-- 'go.sum'
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+        - 'go.mod'
+        - 'go.sum'
 
 documentation:
-- 'README.md'
+  - changed-files:
+      - any-glob-to-any-file:
+        - 'README.md'
 
 legal:
-- 'LICENSE'
+  - changed-files:
+      - any-glob-to-any-file:
+        - 'LICENSE'
 
 tests:
-- '**/*_test.go'
+  - changed-files:
+      - any-glob-to-any-file:
+        - '**/*_test.go'
