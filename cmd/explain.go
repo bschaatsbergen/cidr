@@ -74,7 +74,9 @@ func getNetworkDetails(network *net.IPNet) *networkDetailsToDisplay {
 	}
 
 	// Obtain the netmask and prefix length.
-	details.Netmask = core.GetNetMask(network)
+	netmask := core.GetNetmask(network)
+	// A human-readable representation of the netmask is displayed in the output.
+	details.Netmask = core.NetMaskToIPAddress(netmask)
 	details.PrefixLength = core.GetPrefixLength(details.Netmask)
 
 	// Obtain the base address of the network.
