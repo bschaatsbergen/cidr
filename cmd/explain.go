@@ -123,7 +123,7 @@ func explain(details *networkDetailsToDisplay) {
 	} else if details.BroadcastAddressHasError && details.IsIPV4Network {
 		fmt.Printf(color.RedString("Broadcast Address:\t ")+"%s\n", details.BroadcastAddress)
 	}
-	fmt.Printf(color.BlueString("Address Count:\t\t ")+"%s\n", details.Count)
+	fmt.Printf(color.BlueString("Host Addresses:\t\t ")+"%s\n", details.Count)
 
 	if details.PrefixLength > 1 {
 		lengthIndicator = "bits"
