@@ -25,3 +25,7 @@ jobs:
           skip-build-cache: true
       - name: Run tests
         run: go test -v ./...
+      - name: Setup Copywrite
+        uses: hashicorp/setup-copywrite@v1.1.2
+      - name: Check Header Compliance
+        run: copywrite headers --plan
