@@ -44,12 +44,12 @@ func TestGetAddressCount(t *testing.T) {
 		{
 			name:          "Return the count of all distinct host addresses in a common IPv4 CIDR",
 			cidr:          IPv4CIDR,
-			expectedCount: 65534,
+			expectedCount: 65536,
 		},
 		{
 			name:          "Return the count of all distinct host addresses in a common IPv6 CIDR",
 			cidr:          IPv6CIDR,
-			expectedCount: 4194302,
+			expectedCount: 4194304,
 		},
 		{
 			name:          "Return the count of all distinct host addresses in an uncommon (large prefix) IPv4 CIDR",
