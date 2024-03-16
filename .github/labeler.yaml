@@ -1,3 +1,6 @@
+# Copyright (c) Bruno Schaatsbergen
+# SPDX-License-Identifier: MIT
+
 github-actions:
   - changed-files:
       - any-glob-to-any-file:
