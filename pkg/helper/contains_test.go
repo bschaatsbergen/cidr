@@ -1,3 +1,6 @@
+// Copyright (c) Bruno Schaatsbergen
+// SPDX-License-Identifier: MIT
+
 package helper_test
 
 import (
