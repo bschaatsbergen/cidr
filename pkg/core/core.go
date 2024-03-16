@@ -32,8 +32,7 @@ func GetAddressCount(network *net.IPNet) uint64 {
 		}
 	}
 
-	// Subtract the network address and broadcast address (2) from the total number of addresses.
-	return 1<<(uint64(bits)-uint64(prefixLen)) - 2
+	return 1 << (uint64(bits) - uint64(prefixLen))
 }
 
 // ContainsAddress checks if the given IP network contains the specified IP address.
