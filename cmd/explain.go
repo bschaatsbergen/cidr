@@ -16,10 +16,19 @@ import (
 	"golang.org/x/text/message"
 )
 
+const (
+	explainExample = "# Explain the details of a given IPv4 CIDR range\n" +
+		"cidr explain 10.1.0.0/16\n" +
+		"\n" +
+		"# Explain the details of a given IPv6 CIDR range\n" +
+		"cidr explain 2001:db8:1234:1a00::/106"
+)
+
 var (
 	explainCmd = &cobra.Command{
-		Use:   "explain",
-		Short: "Provides information about a CIDR range",
+		Use:     "explain",
+		Short:   "Provides information about a CIDR range",
+		Example: explainExample,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) != 1 {
 				fmt.Println("error: provide a CIDR range")
