@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"math/big"
 	"net"
 	"os"
 
@@ -48,7 +49,7 @@ func init() {
 	rootCmd.AddCommand(countCmd)
 }
 
-func count(network *net.IPNet) uint64 {
+func count(network *net.IPNet) *big.Int {
 	count := core.GetAddressCount(network)
 	return count
 }

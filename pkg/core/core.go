@@ -5,6 +5,7 @@ package core
 
 import (
 	"errors"
+	"math/big"
 	"net"
 
 	"github.com/bschaatsbergen/cidr/pkg/helper"
@@ -19,23 +20,45 @@ func ParseCIDR(network string) (*net.IPNet, error) {
 	return ip, err
 }
 
-// GetAddressCount returns the number of usable addresses in the given IP network.
+// GetAddressCount returns the number of addresses in the given IP network.
 // It considers the network type (IPv4 or IPv6) and handles edge cases for specific prefix lengths.
 // The result excludes the network address and broadcast address.
-func GetAddressCount(network *net.IPNet) uint64 {
+func GetAddressCount(network *net.IPNet) *big.Int {
 	prefixLen, bits := network.Mask.Size()
 
 	// Handle edge cases for specific IPv4 prefix lengths.
 	if network.Mask != nil && network.IP.To4() != nil {
 		switch prefixLen {
 		case 32:
-			return 1
+			return big.NewInt(1) 
 		case 31:
-			return 2
+			return big.NewInt(2) 
 		}
 	}
 
-	return 1 << (uint64(bits) - uint64(prefixLen))
+	return big.NewInt(0).Lsh(big.NewInt(1), uint(bits-prefixLen))
+}
+
+
+// GetNextAddress retrieves the next available IPNet with your desired CIDR.
+// TODO: Add proper error checking
+func GetNextAddress(network *net.IPNet, cidr net.IPMask) (net.IPNet, error) {
+	addressCount := GetAddressCount(network) 
+	var currentIP *big.Int
+	if helper.IsIPv4Network(network) {
+		currentIP = big.NewInt(0).SetBytes(network.IP.To4())
+	} else {
+		currentIP = big.NewInt(0).SetBytes(network.IP.To16())
+	}
+	nextAddressNum := new(big.Int).Add(addressCount, currentIP)
+
+	nextAddress := net.IP(nextAddressNum.Bytes())
+	return net.IPNet {
+		IP: nextAddress,
+		Mask: cidr,
+	}, nil
+
+
 }
 
 // ContainsAddress checks if the given IP network contains the specified IP address.
