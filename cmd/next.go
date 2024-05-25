@@ -39,7 +39,7 @@ var (
 				fmt.Println(nextHelpMessage)
 				os.Exit(1)
 			}
-			cidrNum, err := strconv.ParseUint(args[1], 10, 64)
+			cidrNum, err := strconv.ParseInt(args[1], 10, 64)
 			var cidr net.IPMask
 			if err != nil || cidrNum <= 1 {
 				fmt.Printf("%s\n", err)

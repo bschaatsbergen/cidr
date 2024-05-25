@@ -3,6 +3,7 @@ package cmd_test
 import (
 	"net"
 	"testing"
+    "fmt"
 
 	"github.com/bschaatsbergen/cidr/cmd"
 )
@@ -10,7 +11,7 @@ import (
 func TestDivideCidr(t *testing.T) {
     testCases := []struct {
         cidr      string
-        divisor   uint64
+        divisor   int64
         expected  []string // Expected CIDRs in string format
         shouldErr bool
     }{
@@ -55,4 +56,71 @@ func TestDivideCidr(t *testing.T) {
             }
         }
     }
+}
+
+func TestDivideCidrHosts(t *testing.T) {
+    testCases := []struct {
+        inputCIDR    string
+        desiredUsers []int64
+        expectedNets []string
+        expectedErr  error
+    }{
+        {"192.168.0.0/24", []int64{20, 10, 30}, []string{"192.168.0.0/27", "192.168.0.32/28", "192.168.0.48/27"}, nil},
+        {"10.0.0.0/16", []int64{1000, 500}, []string{"10.0.0.0/22", "10.0.4.0/23"}, nil},
+        {"2001:db8::/32", []int64{50000}, []string{"2001:db8::/112"}, nil},
+        {"192.168.0.0/24", []int64{}, []string{}, nil},                    // Edge case: empty desiredUsers
+        {"192.168.0.0/24", []int64{257}, nil, fmt.Errorf("Total address space is: 256 but desired Users requires 512 addresses\n")}, // Edge case: not enough addresses
+    }
+
+    for _, tc := range testCases {
+        _, ipNet, err := net.ParseCIDR(tc.inputCIDR)
+        if err != nil && tc.expectedErr == nil {
+            t.Fatalf("Failed to parse CIDR: %v", err)
+        }
+
+        validatedUsers, err := cmd.ValidateUserSpace(ipNet, tc.desiredUsers)
+        if tc.expectedErr != nil {
+            if err == nil || err.Error() != tc.expectedErr.Error() {
+                t.Errorf("A: For %s, users %v: Expected error '%v', got '%v'", tc.inputCIDR, tc.desiredUsers, tc.expectedErr, err)
+            }
+            continue
+        }
+
+        networks, err := cmd.DivideCidrHosts(ipNet, validatedUsers)
+
+        if tc.expectedErr != nil {
+            if err == nil || err.Error() != tc.expectedErr.Error() {
+                t.Errorf("A: For %s, users %v: Expected error '%v', got '%v'", tc.inputCIDR, tc.desiredUsers, tc.expectedErr, err)
+            }
+            continue
+        }
+
+        if err != nil {
+            t.Errorf("B: For %s, users %v: Unexpected error '%v'", tc.inputCIDR, tc.desiredUsers, err)
+            continue
+        }
+
+        netStrings := make([]string, len(networks))
+        for i, n := range networks {
+            netStrings[i] = n.String()
+        }
+
+        if  !equalStringSlices(netStrings , tc.expectedNets) {
+            fmt.Println(networks)
+            t.Errorf("C: For %s, users %v: Expected subnets '%v', got '%v'", tc.inputCIDR, tc.desiredUsers, tc.expectedNets, netStrings)
+        }
+    }
+}
+
+
+func equalStringSlices(a, b []string) bool {
+    if len(a) != len(b) {
+        return false
+    }
+    for i, v := range a {
+        if v != b[i] {
+            return false
+        }
+    }
+    return true
 }

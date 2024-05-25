@@ -4,6 +4,7 @@
 package core_test
 
 import (
+	"math/big"
 	"net"
 	"testing"
 
@@ -39,33 +40,33 @@ func TestGetAddressCount(t *testing.T) {
 	tests := []struct {
 		name          string
 		cidr          *net.IPNet
-		expectedCount uint64
+		expectedCount *big.Int
 	}{
 		{
 			name:          "Return the count of all distinct host addresses in a common IPv4 CIDR",
 			cidr:          IPv4CIDR,
-			expectedCount: 65536,
+			expectedCount: big.NewInt(65536),
 		},
 		{
 			name:          "Return the count of all distinct host addresses in a common IPv6 CIDR",
 			cidr:          IPv6CIDR,
-			expectedCount: 4194304,
+			expectedCount: big.NewInt(4194304),
 		},
 		{
 			name:          "Return the count of all distinct host addresses in an uncommon (large prefix) IPv4 CIDR",
 			cidr:          largeIPv4PrefixCIDR,
-			expectedCount: 2,
+			expectedCount: big.NewInt(2),
 		},
 		{
 			name:          "Return the count of all distinct host addresses in an uncommon (largest prefix) IPv4 CIDR",
 			cidr:          largestIPv4PrefixCIDR,
-			expectedCount: 1,
+			expectedCount: big.NewInt(1),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			count := core.GetAddressCount(tt.cidr)
-			assert.Equal(t, int(tt.expectedCount), int(count), "Both address counts should be equal")
+			assert.Equal(t, tt.expectedCount, count, "Both address counts should be equal")
 		})
 	}
 }

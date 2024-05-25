@@ -93,9 +93,53 @@ This also works with IPv6 CIDR ranges, for example:
 
 ```
 $ cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96
-true
+
 ```
 
+### CIDR division
+
+To divide a cidr range into distinct N distinct networks
+## IPV4
+```
+$ cidr divide 10.0.0.0/16 9
+  [Networks]
+10.0.0.0/20
+10.0.16.0/20
+10.0.32.0/20
+10.0.48.0/20
+10.0.64.0/20
+10.0.80.0/20
+10.0.96.0/20
+10.0.112.0/20
+10.0.128.0/20
+```
+
+## IPV6
+```
+$ cidr divide 2001:db8:1111:2222:1::/80 9
+  [Networks]
+2001:db8:1111:2222:1::/84
+2001:db8:1111:2222:1:1000::/84
+2001:db8:1111:2222:1:2000::/84
+2001:db8:1111:2222:1:3000::/84
+2001:db8:1111:2222:1:4000::/84
+2001:db8:1111:2222:1:5000::/84
+2001:db8:1111:2222:1:6000::/84
+2001:db8:1111:2222:1:7000::/84
+2001:db8:1111:2222:1:8000::/84
+
+```
+
+You can also use the -u flag to divide the network by desired users/hosts on your network. It assumes a Broadcast and Gateway address in the calculation. So you only have to think of hosts.
+The command below illistrate cutting a network into a minimum of 32 hosts, 30 hosts and 12 hosts. And gives you the total possible users/hosts available for your subnet
+```
+$ cidr d 192.168.0.0/24 -u 32,30,12
+  [Networks]            [Used]  [Total]
+192.168.0.0/26            32      62
+192.168.0.64/27           30      30
+192.168.0.96/28           12      14
+
+```
 ## Contributing
 
 Contributions are highly appreciated and always welcome.
