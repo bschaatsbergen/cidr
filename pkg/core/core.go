@@ -30,20 +30,19 @@ func GetAddressCount(network *net.IPNet) *big.Int {
 	if network.Mask != nil && network.IP.To4() != nil {
 		switch prefixLen {
 		case 32:
-			return big.NewInt(1) 
+			return big.NewInt(1)
 		case 31:
-			return big.NewInt(2) 
+			return big.NewInt(2)
 		}
 	}
 
 	return big.NewInt(0).Lsh(big.NewInt(1), uint(bits-prefixLen))
 }
 
-
 // GetNextAddress retrieves the next available IPNet with your desired CIDR.
 // TODO: Add proper error checking
 func GetNextAddress(network *net.IPNet, cidr net.IPMask) (net.IPNet, error) {
-	addressCount := GetAddressCount(network) 
+	addressCount := GetAddressCount(network)
 	var currentIP *big.Int
 	if helper.IsIPv4Network(network) {
 		currentIP = big.NewInt(0).SetBytes(network.IP.To4())
@@ -53,11 +52,10 @@ func GetNextAddress(network *net.IPNet, cidr net.IPMask) (net.IPNet, error) {
 	nextAddressNum := new(big.Int).Add(addressCount, currentIP)
 
 	nextAddress := net.IP(nextAddressNum.Bytes())
-	return net.IPNet {
-		IP: nextAddress,
+	return net.IPNet{
+		IP:   nextAddress,
 		Mask: cidr,
 	}, nil
-
 
 }
 
