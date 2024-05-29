@@ -40,7 +40,6 @@ func GetAddressCount(network *net.IPNet) *big.Int {
 }
 
 // GetNextAddress retrieves the next available IPNet with your desired CIDR.
-// TODO: Add proper error checking.
 func GetNextAddress(network *net.IPNet, cidr net.IPMask) (net.IPNet, error) {
 	addressCount := GetAddressCount(network)
 	var currentIP *big.Int

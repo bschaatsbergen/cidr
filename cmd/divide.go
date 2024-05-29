@@ -40,7 +40,6 @@ const (
 		"10.0.0.0/27               23      30\n" +
 		"10.0.0.32/28              10      14\n" +
 		"10.0.0.48/25             125     126\n"
-
 )
 
 var (
@@ -96,7 +95,7 @@ func divideArgumentValidator(cmd *cobra.Command, args []string) error {
 	} else {
 		desiredUsers, err = ValidateUserSpace(network, desiredUsersPerSubnet)
 		if err != nil {
-			return fmt.Errorf("%v\n",err)
+			return fmt.Errorf("%v\n", err)
 		}
 	}
 
