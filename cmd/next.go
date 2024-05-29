@@ -8,7 +8,6 @@ import (
 
 	"github.com/bschaatsbergen/cidr/pkg/core"
 	"github.com/bschaatsbergen/cidr/pkg/helper"
-	//"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 

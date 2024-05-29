@@ -19,6 +19,8 @@ type DivideOptions struct {
 	Users   []int64
 }
 
+type ArgsKey struct{}
+
 const (
 	divideExample = "# Divides the given CIDR range into N distinct networks *Truncates output to 50\n" +
 		"$ cidr divide 10.0.0.0/16 9\n" +
@@ -39,7 +41,6 @@ const (
 		"10.0.0.32/28              10      14\n" +
 		"10.0.0.48/25             125     126\n"
 
-	divideHelpMessage = "See 'cidr divide -h' for more details"
 )
 
 var (
@@ -59,7 +60,7 @@ func init() {
 	rootCmd.AddCommand(divideCmd)
 }
 
-// Validates the arguments for the network Divison operation.
+// Validates the arguments for the network division operation.
 // Catches network parsing errors and invalid divisors.
 func divideArgumentValidator(cmd *cobra.Command, args []string) error {
 	// Network parsing checks.
@@ -94,6 +95,9 @@ func divideArgumentValidator(cmd *cobra.Command, args []string) error {
 		}
 	} else {
 		desiredUsers, err = ValidateUserSpace(network, desiredUsersPerSubnet)
+		if err != nil {
+			return fmt.Errorf("%v\n",err)
+		}
 	}
 
 	// Collects the valid arguments, so we don't need to bother with these checks later.
@@ -102,12 +106,19 @@ func divideArgumentValidator(cmd *cobra.Command, args []string) error {
 		Divisor: divisor,
 		Users:   desiredUsers,
 	}
-	cmd.SetContext(context.WithValue(cmd.Context(), "validArgs", validArgs))
+	cmd.SetContext(context.WithValue(cmd.Context(), ArgsKey{}, validArgs))
 	return nil
 }
 
 func executeDivide(cmd *cobra.Command, args []string) error {
-	validArgs := cmd.Context().Value("validArgs").(*DivideOptions)
+	validArgsInterface := cmd.Context().Value(ArgsKey{})
+	if validArgsInterface == nil {
+		return fmt.Errorf("validArgs not in context\n")
+	}
+	validArgs, ok := validArgsInterface.(*DivideOptions)
+	if !ok {
+		return fmt.Errorf("Invalid type for validArgs: %T", validArgsInterface)
+	}
 	desiredUsers, err := cmd.Flags().GetInt64Slice("users")
 	if err != nil {
 		return err
@@ -153,7 +164,7 @@ func DivideCidr(network *net.IPNet, divisor int64) ([]net.IPNet, error) {
 	return networks, nil
 }
 
-// Given an IP Network and a list of desired users, splits the network into a configuration that accomodates the user space.
+// Given an IP Network and a list of desired users, splits the network into a configuration that accommodates the user space.
 // Eg. Splitting a 192.168.0.0/24 where I need a network with 20 users, 10 users, and 30users.
 // Gets the /27 /28 and /27 combination.
 func DivideCidrHosts(network *net.IPNet, desiredUsers []int64) ([]net.IPNet, error) {
@@ -183,7 +194,7 @@ func DivideCidrHosts(network *net.IPNet, desiredUsers []int64) ([]net.IPNet, err
 }
 
 // Returns the net.IPMask necessary for the provided divisor.
-// Errors if address space if insufficient or divison is not possible.
+// Errors if address space if insufficient or division is not possible.
 func getPrefix(divisor int64, addressCount *big.Int, IPv4 bool) (net.IPMask, error) {
 	div := big.NewInt(divisor)
 	if addressCount.Cmp(div) == -1 || div.Cmp(big.NewInt(0)) == 0 {
