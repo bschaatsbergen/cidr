@@ -98,7 +98,7 @@ $ cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96
 
 ### CIDR division
 
-To divide a cidr range into distinct N distinct networks
+To divide a CIDR range into N distinct networks:
 ## IPV4
 ```
 $ cidr divide 10.0.0.0/16 9
@@ -130,8 +130,8 @@ $ cidr divide 2001:db8:1111:2222:1::/80 9
 
 ```
 
-You can also use the -u flag to divide the network by desired users/hosts on your network. It assumes a Broadcast and Gateway address in the calculation. So you only have to think of hosts.
-The command below illistrate cutting a network into a minimum of 32 hosts, 30 hosts and 12 hosts. And gives you the total possible users/hosts available for your subnet
+You can also use the `-u` flag to divide the network based on the number of desired host addresses. This calculation includes a broadcast and gateway address, so you only need to consider the host addresses.
+The command below shows how to divide a CIDR range to accommodate a minimum of 32 hosts, 30 hosts, and 12 hosts. It also provides the total possible hosts available for a subnet.
 ```
 $ cidr d 192.168.0.0/24 -u 32,30,12
   [Networks]            [Used]  [Total]
