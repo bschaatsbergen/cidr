@@ -1,3 +1,6 @@
+// Copyright (c) Bruno Schaatsbergen
+// SPDX-License-Identifier: MIT
+
 package cmd
 
 import (
