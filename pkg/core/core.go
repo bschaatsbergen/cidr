@@ -7,6 +7,8 @@ import (
 	"errors"
 	"math/big"
 	"net"
+	"fmt"
+	"math"
 
 	"github.com/bschaatsbergen/cidr/pkg/helper"
 )
@@ -186,4 +188,106 @@ func GetBroadcastAddress(network *net.IPNet) (net.IP, error) {
 	}
 
 	return ip, nil
+}
+
+
+// Returns the net.IPMask necessary for the provided divisor.
+// Errors if address space if insufficient or division is not possible.
+func GetMaskWithDivisor(divisor int64, addressCount *big.Int, IPv4 bool) (net.IPMask, error) {
+	div := big.NewInt(divisor)
+	if addressCount.Cmp(div) == -1 || div.Cmp(big.NewInt(0)) == 0 {
+		return nil, fmt.Errorf("Cannot divide %d Addresses into %d divisions\n", addressCount, div)
+	}
+
+	addressPartition := new(big.Int).Div(addressCount, div)
+	two := big.NewInt(2)
+	exponent := big.NewInt(0)
+	for two.Cmp(addressPartition) <= 0 {
+		two.Lsh(two, 1)
+		exponent.Add(exponent, big.NewInt(1))
+	}
+	subnetPrefix := int(exponent.Int64())
+	bits := net.IPv6len * 8
+	if IPv4 {
+		bits = net.IPv4len * 8
+		if subnetPrefix > 30 {
+			return nil, fmt.Errorf("Address Space is insufficient for %d subnets\n", div)
+		}
+	}
+	if subnetPrefix > 126 {
+		return nil, fmt.Errorf("Address Space is insufficient for %d subnets\n", div)
+	}
+	return net.CIDRMask(bits-subnetPrefix, bits), nil
+
+}
+
+
+// Divides the given network into N smaller networks.
+// Errors if division is not possible.
+func DivideCidr(network *net.IPNet, divisor int64) ([]net.IPNet, error) {
+	isIPv4 := helper.IsIPv4Network(network)
+
+	addressCount := GetAddressCount(network)
+	cidrWack, err := GetMaskWithDivisor(divisor, addressCount, isIPv4)
+	if err != nil {
+		return nil, fmt.Errorf("%s\n", err)
+	}
+
+	networks := make([]net.IPNet, divisor)
+	nextAddress := new(net.IPNet)
+	nextAddress.IP = network.IP
+	nextAddress.Mask = cidrWack
+	subnetSize := GetAddressCount(nextAddress)
+	for i := int64(0); i < divisor; i++ {
+		networks[i] = *nextAddress
+		ipAsInt := new(big.Int).SetBytes(nextAddress.IP)
+		nextAddress.IP = new(big.Int).Add(ipAsInt, subnetSize).Bytes()
+	}
+	return networks, nil
+}
+
+// Given an IP Network and a list of desired hosts, splits the network into a configuration that accommodates the user space.
+// Eg. Splitting a 192.168.0.0/24 where I need a network with 20 hosts, 10 hosts, and 30users.
+// Gets the /27 /28 and /27 combination.
+func DivideCidrHosts(network *net.IPNet, desiredHosts []int64) ([]net.IPNet, error) {
+	var bits int
+	if helper.IsIPv4Network(network) {
+		bits = net.IPv4len * 8
+	} else {
+		bits = net.IPv6len * 8
+	}
+	networks := make([]net.IPNet, len(desiredHosts))
+	nextIP := network.IP
+	for i, hosts := range desiredHosts {
+		subnetPrefix := net.CIDRMask(bits-int(hosts), bits)
+		nextNetwork := net.IPNet{
+			IP:   nextIP,
+			Mask: subnetPrefix,
+		}
+		networks[i] = nextNetwork
+		nextNetwork, err := GetNextAddress(&nextNetwork, subnetPrefix)
+		if err != nil {
+			return nil, err
+		}
+		nextIP = nextNetwork.IP
+	}
+	return networks, nil
+}
+
+
+func ValidateHostSpace(network *net.IPNet, desiredHostsPerSubnet []int64) ([]int64, error) {
+	requiredAddressSpace := int64(0)
+	totalAddressSpace := GetAddressCount(network)
+	desiredHosts := make([]int64, len(desiredHostsPerSubnet))
+	for i, hosts := range desiredHostsPerSubnet {
+		subnetExponent := math.Ceil(math.Log2(float64(hosts) + 2.0))
+		addressSpace := int64(math.Pow(2, subnetExponent))
+		requiredAddressSpace += addressSpace
+		desiredHosts[i] = int64(subnetExponent)
+	}
+	requiredAddressSpaceBig := big.NewInt(requiredAddressSpace)
+	if totalAddressSpace.Cmp(requiredAddressSpaceBig) < 0 {
+		return nil, fmt.Errorf("Total address space is: %s but desired Hosts requires %d addresses\n", totalAddressSpace.String(), requiredAddressSpace)
+	}
+	return desiredHosts, nil
 }

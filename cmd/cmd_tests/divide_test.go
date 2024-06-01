@@ -7,8 +7,7 @@ import (
 	"fmt"
 	"net"
 	"testing"
-
-	"github.com/bschaatsbergen/cidr/cmd"
+	"github.com/bschaatsbergen/cidr/pkg/core"
 )
 
 func TestDivideCidr(t *testing.T) {
@@ -33,7 +32,7 @@ func TestDivideCidr(t *testing.T) {
 			continue
 		}
 
-		subnets, err := cmd.DivideCidr(ipNet, tc.divisor)
+		subnets, err := core.DivideCidr(ipNet, tc.divisor)
 
 		if tc.shouldErr {
 			if err == nil {
@@ -71,7 +70,7 @@ func TestDivideCidrHosts(t *testing.T) {
 		{"10.0.0.0/16", []int64{1000, 500}, []string{"10.0.0.0/22", "10.0.4.0/23"}, nil},
 		{"2001:db8::/32", []int64{50000}, []string{"2001:db8::/112"}, nil},
 		{"192.168.0.0/24", []int64{}, []string{}, nil},                                                                              // Edge case: empty desiredUsers
-		{"192.168.0.0/24", []int64{257}, nil, fmt.Errorf("Total address space is: 256 but desired Users requires 512 addresses\n")}, // Edge case: not enough addresses
+		{"192.168.0.0/24", []int64{257}, nil, fmt.Errorf("Total address space is: 256 but desired Hosts requires 512 addresses\n")}, // Edge case: not enough addresses
 	}
 
 	for _, tc := range testCases {
@@ -80,7 +79,7 @@ func TestDivideCidrHosts(t *testing.T) {
 			t.Fatalf("Failed to parse CIDR: %v", err)
 		}
 
-		validatedUsers, err := cmd.ValidateUserSpace(ipNet, tc.desiredUsers)
+		validatedHosts, err := core.ValidateHostSpace(ipNet, tc.desiredUsers)
 		if tc.expectedErr != nil {
 			if err == nil || err.Error() != tc.expectedErr.Error() {
 				t.Errorf("A: For %s, users %v: Expected error '%v', got '%v'", tc.inputCIDR, tc.desiredUsers, tc.expectedErr, err)
@@ -88,7 +87,7 @@ func TestDivideCidrHosts(t *testing.T) {
 			continue
 		}
 
-		networks, err := cmd.DivideCidrHosts(ipNet, validatedUsers)
+		networks, err := core.DivideCidrHosts(ipNet, validatedHosts)
 
 		if tc.expectedErr != nil {
 			if err == nil || err.Error() != tc.expectedErr.Error() {

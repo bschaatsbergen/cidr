@@ -5,8 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"math"
-	"math/big"
 	"net"
 	"os"
 
@@ -14,8 +12,6 @@ import (
 	"github.com/bschaatsbergen/cidr/pkg/helper"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 )
 
 const (
@@ -31,6 +27,7 @@ var (
 		Use:     "explain",
 		Short:   "Provides information about a CIDR range",
 		Example: explainExample,
+		Aliases: []string{"e", "exp", "expl"},
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) != 1 {
 				fmt.Println("error: provide a CIDR range")
@@ -99,11 +96,12 @@ func getNetworkDetails(network *net.IPNet) *networkDetailsToDisplay {
 	// Obtain the total count of addresses in the network.
 	count := core.GetAddressCount(network)
 	// Format the count as a human-readable string and store it in the details struct.
-	if count.Cmp(big.NewInt(math.MaxInt64)) == 1 {
-		details.Count = message.NewPrinter(language.English).Sprintf("%s", count.String())
-	} else {
-		details.Count = message.NewPrinter(language.English).Sprintf("%d", count.Uint64())
-	}
+	details.Count = helper.FormatNumber(count.String())
+	// if count.Cmp(big.NewInt(math.MaxInt64)) == 1 {
+	// 	details.Count = message.NewPrinter(language.English).Sprintf("%s", count.String())
+	// } else {
+	// 	details.Count = message.NewPrinter(language.English).Sprintf("%d", count.Uint64())
+	// }
 
 	// Obtain the first and last usable IP addresses, handling errors if they occur.
 	firstUsableIP, err := core.GetFirstUsableIPAddress(network)
