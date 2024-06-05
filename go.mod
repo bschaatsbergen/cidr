@@ -5,7 +5,7 @@ go 1.21.4
 require (
 	github.com/fatih/color v1.17.0
 	github.com/spf13/cobra v1.8.0
-	golang.org/x/text v0.15.0
+	golang.org/x/text v0.16.0
 )
 
 require (
