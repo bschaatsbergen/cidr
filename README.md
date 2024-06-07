@@ -93,7 +93,7 @@ This also works with IPv6 CIDR ranges, for example:
 
 ```
 $ cidr overlaps 2001:db8:1111:2222:1::/80 2001:db8:1111:2222:1:1::/96
-
+true
 ```
 
 ### CIDR division
