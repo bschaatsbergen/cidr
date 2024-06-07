@@ -26,6 +26,6 @@ jobs:
       - name: Run tests
         run: go test -v ./...
       - name: Setup Copywrite
-        uses: hashicorp/setup-copywrite@v1.1.2
+        uses: hashicorp/setup-copywrite@v1.1.3
       - name: Check Header Compliance
         run: copywrite headers --plan
