@@ -97,11 +97,6 @@ func getNetworkDetails(network *net.IPNet) *networkDetailsToDisplay {
 	count := core.GetAddressCount(network)
 	// Format the count as a human-readable string and store it in the details struct.
 	details.Count = helper.FormatNumber(count.String())
-	// if count.Cmp(big.NewInt(math.MaxInt64)) == 1 {
-	// 	details.Count = message.NewPrinter(language.English).Sprintf("%s", count.String())
-	// } else {
-	// 	details.Count = message.NewPrinter(language.English).Sprintf("%d", count.Uint64())
-	// }
 
 	// Obtain the first and last usable IP addresses, handling errors if they occur.
 	firstUsableIP, err := core.GetFirstUsableIPAddress(network)

@@ -137,7 +137,6 @@ func executeDivide(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-
 func printNetworkPartitions(networks []net.IPNet) {
 	fmt.Println("  [Networks]")
 	networkCount := len(networks)
@@ -166,4 +165,3 @@ func printNetworkHostBreakdown(networks []net.IPNet, desiredHosts []int64) {
 		fmt.Printf("%-18s%10d%8d\n", networks[i].String(), desiredHosts[i], int64(totalHosts-2.0))
 	}
 }
-

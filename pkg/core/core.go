@@ -5,10 +5,10 @@ package core
 
 import (
 	"errors"
-	"math/big"
-	"net"
 	"fmt"
 	"math"
+	"math/big"
+	"net"
 
 	"github.com/bschaatsbergen/cidr/pkg/helper"
 )
@@ -190,7 +190,6 @@ func GetBroadcastAddress(network *net.IPNet) (net.IP, error) {
 	return ip, nil
 }
 
-
 // Returns the net.IPMask necessary for the provided divisor.
 // Errors if address space if insufficient or division is not possible.
 func GetMaskWithDivisor(divisor int64, addressCount *big.Int, IPv4 bool) (net.IPMask, error) {
@@ -221,14 +220,13 @@ func GetMaskWithDivisor(divisor int64, addressCount *big.Int, IPv4 bool) (net.IP
 
 }
 
-
 // Divides the given network into N smaller networks.
 // Errors if division is not possible.
 func DivideCidr(network *net.IPNet, divisor int64) ([]net.IPNet, error) {
 	isIPv4 := helper.IsIPv4Network(network)
 
 	addressCount := GetAddressCount(network)
-	cidrWack, err := GetMaskWithDivisor(divisor, addressCount, isIPv4)
+	newSubnetMask, err := GetMaskWithDivisor(divisor, addressCount, isIPv4)
 	if err != nil {
 		return nil, fmt.Errorf("%s\n", err)
 	}
@@ -236,7 +234,7 @@ func DivideCidr(network *net.IPNet, divisor int64) ([]net.IPNet, error) {
 	networks := make([]net.IPNet, divisor)
 	nextAddress := new(net.IPNet)
 	nextAddress.IP = network.IP
-	nextAddress.Mask = cidrWack
+	nextAddress.Mask = newSubnetMask
 	subnetSize := GetAddressCount(nextAddress)
 	for i := int64(0); i < divisor; i++ {
 		networks[i] = *nextAddress
@@ -273,7 +271,6 @@ func DivideCidrHosts(network *net.IPNet, desiredHosts []int64) ([]net.IPNet, err
 	}
 	return networks, nil
 }
-
 
 func ValidateHostSpace(network *net.IPNet, desiredHostsPerSubnet []int64) ([]int64, error) {
 	requiredAddressSpace := int64(0)

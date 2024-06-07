@@ -5,9 +5,9 @@ package cmd_test
 
 import (
 	"fmt"
+	"github.com/bschaatsbergen/cidr/pkg/core"
 	"net"
 	"testing"
-	"github.com/bschaatsbergen/cidr/pkg/core"
 )
 
 func TestDivideCidr(t *testing.T) {
