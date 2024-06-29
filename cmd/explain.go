@@ -12,8 +12,6 @@ import (
 	"github.com/bschaatsbergen/cidr/pkg/helper"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 )
 
 const (
@@ -97,7 +95,7 @@ func getNetworkDetails(network *net.IPNet) *networkDetailsToDisplay {
 	// Obtain the total count of addresses in the network.
 	count := core.GetAddressCount(network)
 	// Format the count as a human-readable string and store it in the details struct.
-	details.Count = message.NewPrinter(language.English).Sprintf("%d", count)
+	details.Count = helper.FormatNumber(count.String())
 
 	// Obtain the first and last usable IP addresses, handling errors if they occur.
 	firstUsableIP, err := core.GetFirstUsableIPAddress(network)

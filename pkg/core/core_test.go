@@ -4,6 +4,7 @@
 package core_test
 
 import (
+	"math/big"
 	"net"
 	"testing"
 
@@ -39,33 +40,33 @@ func TestGetAddressCount(t *testing.T) {
 	tests := []struct {
 		name          string
 		cidr          *net.IPNet
-		expectedCount uint64
+		expectedCount *big.Int
 	}{
 		{
 			name:          "Return the count of all distinct host addresses in a common IPv4 CIDR",
 			cidr:          IPv4CIDR,
-			expectedCount: 65536,
+			expectedCount: big.NewInt(65536),
 		},
 		{
 			name:          "Return the count of all distinct host addresses in a common IPv6 CIDR",
 			cidr:          IPv6CIDR,
-			expectedCount: 4194304,
+			expectedCount: big.NewInt(4194304),
 		},
 		{
 			name:          "Return the count of all distinct host addresses in an uncommon (large prefix) IPv4 CIDR",
 			cidr:          largeIPv4PrefixCIDR,
-			expectedCount: 2,
+			expectedCount: big.NewInt(2),
 		},
 		{
 			name:          "Return the count of all distinct host addresses in an uncommon (largest prefix) IPv4 CIDR",
 			cidr:          largestIPv4PrefixCIDR,
-			expectedCount: 1,
+			expectedCount: big.NewInt(1),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			count := core.GetAddressCount(tt.cidr)
-			assert.Equal(t, int(tt.expectedCount), int(count), "Both address counts should be equal")
+			assert.Equal(t, tt.expectedCount, count, "Both address counts should be equal")
 		})
 	}
 }
@@ -482,6 +483,72 @@ func TestParseCIDR(t *testing.T) {
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ParseCIDR() error = %v, wantErr %v", err, tt.wantErr)
 				return
+			}
+		})
+	}
+}
+
+func TestDivideCIDR(t *testing.T) {
+	tests := []struct {
+		name      string
+		cidr      string
+		divisor   int64
+		expected  []string
+		shouldErr bool
+	}{
+		{
+			name:      "Divide IPv4 CIDR into 2 subnets",
+			cidr:      "10.0.0.0/16",
+			divisor:   2,
+			expected:  []string{"10.0.0.0/17", "10.0.128.0/17"},
+			shouldErr: false,
+		},
+		{
+			name:      "Divide IPv4 CIDR into 4 subnets",
+			cidr:      "192.168.0.0/24",
+			divisor:   4,
+			expected:  []string{"192.168.0.0/26", "192.168.0.64/26", "192.168.0.128/26", "192.168.0.192/26"},
+			shouldErr: false,
+		},
+		{
+			name:      "Divide IPv6 CIDR into 3 subnets",
+			cidr:      "2001:db8::/32",
+			divisor:   3,
+			expected:  []string{"2001:db8::/34", "2001:db8:4000::/34", "2001:db8:8000::/34"},
+			shouldErr: false,
+		},
+		{
+			name:      "Error case: Divisor is zero",
+			cidr:      "10.0.0.0/16",
+			divisor:   0,
+			expected:  nil,
+			shouldErr: true,
+		},
+		{
+			name:      "Error case: Cannot divide /128 CIDR",
+			cidr:      "2001:db8::/128",
+			divisor:   3,
+			expected:  nil,
+			shouldErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, ipNet, err := net.ParseCIDR(tt.cidr)
+			assert.NoError(t, err, "Unexpected error parsing CIDR: %v", err)
+
+			subnets, err := core.DivideCIDR(ipNet, tt.divisor)
+			if tt.shouldErr {
+				assert.Error(t, err, "Expected error but got none")
+				return
+			}
+
+			assert.NoError(t, err, "Unexpected error: %v", err)
+			assert.Equal(t, len(tt.expected), len(subnets), "Incorrect number of subnets")
+
+			for i, expectedCIDR := range tt.expected {
+				assert.Equal(t, expectedCIDR, subnets[i].String(), "Incorrect subnet at index %d", i)
 			}
 		})
 	}

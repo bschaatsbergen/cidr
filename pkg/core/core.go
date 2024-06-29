@@ -5,6 +5,8 @@ package core
 
 import (
 	"errors"
+	"fmt"
+	"math/big"
 	"net"
 
 	"github.com/bschaatsbergen/cidr/pkg/helper"
@@ -19,23 +21,23 @@ func ParseCIDR(network string) (*net.IPNet, error) {
 	return ip, err
 }
 
-// GetAddressCount returns the number of usable addresses in the given IP network.
+// GetAddressCount returns the number of addresses in the given IP network.
 // It considers the network type (IPv4 or IPv6) and handles edge cases for specific prefix lengths.
 // The result excludes the network address and broadcast address.
-func GetAddressCount(network *net.IPNet) uint64 {
+func GetAddressCount(network *net.IPNet) *big.Int {
 	prefixLen, bits := network.Mask.Size()
 
 	// Handle edge cases for specific IPv4 prefix lengths.
 	if network.Mask != nil && network.IP.To4() != nil {
 		switch prefixLen {
 		case 32:
-			return 1
+			return big.NewInt(1)
 		case 31:
-			return 2
+			return big.NewInt(2)
 		}
 	}
 
-	return 1 << (uint64(bits) - uint64(prefixLen))
+	return big.NewInt(0).Lsh(big.NewInt(1), uint(bits-prefixLen))
 }
 
 // ContainsAddress checks if the given IP network contains the specified IP address.
@@ -166,4 +168,55 @@ func GetBroadcastAddress(network *net.IPNet) (net.IP, error) {
 	}
 
 	return ip, nil
+}
+
+// GetMaskWithDivisor calculates the subnet mask for the given divisor and address count.
+func GetMaskWithDivisor(divisor int64, addressCount *big.Int, IPv4 bool) (net.IPMask, error) {
+	div := big.NewInt(divisor)
+	if addressCount.Cmp(div) == -1 || div.Cmp(big.NewInt(0)) == 0 {
+		return nil, fmt.Errorf("cannot divide %d addresses into %d divisions", addressCount, div)
+	}
+
+	addressPartition := new(big.Int).Div(addressCount, div)
+	two := big.NewInt(2)
+	exponent := big.NewInt(0)
+	for two.Cmp(addressPartition) <= 0 {
+		two.Lsh(two, 1)
+		exponent.Add(exponent, big.NewInt(1))
+	}
+	subnetPrefix := int(exponent.Int64())
+	bits := net.IPv6len * 8
+	if IPv4 {
+		bits = net.IPv4len * 8
+		if subnetPrefix > 30 {
+			return nil, fmt.Errorf("address Space is insufficient for %d subnets", div)
+		}
+	}
+	if subnetPrefix > 126 {
+		return nil, fmt.Errorf("address Space is insufficient for %d subnets", div)
+	}
+	return net.CIDRMask(bits-subnetPrefix, bits), nil
+}
+
+// DivideCIDR divides the given IP network into the specified number of subnets.
+func DivideCIDR(network *net.IPNet, divisor int64) ([]net.IPNet, error) {
+	isIPv4 := helper.IsIPv4Network(network)
+
+	addressCount := GetAddressCount(network)
+	newSubnetMask, err := GetMaskWithDivisor(divisor, addressCount, isIPv4)
+	if err != nil {
+		return nil, fmt.Errorf("%s", err)
+	}
+
+	networks := make([]net.IPNet, divisor)
+	nextAddress := new(net.IPNet)
+	nextAddress.IP = network.IP
+	nextAddress.Mask = newSubnetMask
+	subnetSize := GetAddressCount(nextAddress)
+	for i := int64(0); i < divisor; i++ {
+		networks[i] = *nextAddress
+		ipAsInt := new(big.Int).SetBytes(nextAddress.IP)
+		nextAddress.IP = new(big.Int).Add(ipAsInt, subnetSize).Bytes()
+	}
+	return networks, nil
 }
