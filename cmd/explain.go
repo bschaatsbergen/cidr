@@ -27,7 +27,6 @@ var (
 		Use:     "explain",
 		Short:   "Provides information about a CIDR range",
 		Example: explainExample,
-		Aliases: []string{"e", "exp", "expl"},
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) != 1 {
 				fmt.Println("error: provide a CIDR range")
