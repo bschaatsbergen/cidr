@@ -1,6 +1,3 @@
-// Copyright (c) Bruno Schaatsbergen
-// SPDX-License-Identifier: MIT
-
 package helper
 
 // ContainsInt checks if the given slice of integers contains the specified integer.
