@@ -102,7 +102,6 @@ To divide a CIDR range into N distinct networks:
 ## IPV4
 ```
 $ cidr divide 10.0.0.0/16 9
-  [Networks]
 10.0.0.0/20
 10.0.16.0/20
 10.0.32.0/20
@@ -117,7 +116,6 @@ $ cidr divide 10.0.0.0/16 9
 ## IPV6
 ```
 $ cidr divide 2001:db8:1111:2222:1::/80 9
-  [Networks]
 2001:db8:1111:2222:1::/84
 2001:db8:1111:2222:1:1000::/84
 2001:db8:1111:2222:1:2000::/84
@@ -129,15 +127,6 @@ $ cidr divide 2001:db8:1111:2222:1::/80 9
 2001:db8:1111:2222:1:8000::/84
 
 ```
-
-You can also use the `-u` flag to divide the network based on the number of desired host addresses. This calculation includes a broadcast and gateway address, so you only need to consider the host addresses.
-The command below shows how to divide a CIDR range to accommodate a minimum of 32 hosts, 30 hosts, and 12 hosts. It also provides the total possible hosts available for a subnet.
-```
-$ cidr d 192.168.0.0/24 -u 32,30,12
-  [Networks]            [Used]  [Total]
-192.168.0.0/26            32      62
-192.168.0.64/27           30      30
-192.168.0.96/28           12      14
 
 ```
 ## Contributing
