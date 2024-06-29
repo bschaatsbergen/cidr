@@ -7,6 +7,7 @@ import (
 
 	"github.com/bschaatsbergen/cidr/pkg/core"
 	"github.com/bschaatsbergen/cidr/pkg/helper"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -90,7 +91,7 @@ func printNetworkPartitions(networks []net.IPNet) {
 		for i := 0; i < truncateLimit/2; i++ {
 			fmt.Println(networks[i].String())
 		}
-		fmt.Println("......")
+		fmt.Println(color.BlueString("......"))
 		for i := networkCount - truncateLimit/2; i < networkCount; i++ {
 			fmt.Println(networks[i].String())
 		}
