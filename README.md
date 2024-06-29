@@ -99,7 +99,7 @@ true
 ### CIDR division
 
 To divide a CIDR range into N distinct networks:
-## IPV4
+
 ```
 $ cidr divide 10.0.0.0/16 9
 10.0.0.0/20
@@ -113,7 +113,8 @@ $ cidr divide 10.0.0.0/16 9
 10.0.128.0/20
 ```
 
-## IPV6
+This also works with IPv6 CIDR ranges, for example:
+
 ```
 $ cidr divide 2001:db8:1111:2222:1::/80 9
 2001:db8:1111:2222:1::/84
@@ -125,10 +126,8 @@ $ cidr divide 2001:db8:1111:2222:1::/80 9
 2001:db8:1111:2222:1:6000::/84
 2001:db8:1111:2222:1:7000::/84
 2001:db8:1111:2222:1:8000::/84
-
 ```
 
-```
 ## Contributing
 
 Contributions are highly appreciated and always welcome.
