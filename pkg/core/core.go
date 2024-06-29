@@ -1,6 +1,3 @@
-// Copyright (c) Bruno Schaatsbergen
-// SPDX-License-Identifier: MIT
-
 package core
 
 import (
