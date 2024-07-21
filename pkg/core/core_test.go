@@ -68,6 +68,65 @@ func TestGetAddressCount(t *testing.T) {
 	}
 }
 
+func TestGetHostAddressCount(t *testing.T) {
+	IPv4CIDR, err := core.ParseCIDR("10.0.0.0/16")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	IPv6CIDR, err := core.ParseCIDR("2001:db8:1234:1a00::/106")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	largeIPv4PrefixCIDR, err := core.ParseCIDR("172.16.18.0/31")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	largestIPv4PrefixCIDR, err := core.ParseCIDR("172.16.18.0/32")
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+
+	tests := []struct {
+		name          string
+		cidr          *net.IPNet
+		expectedCount *big.Int
+	}{
+		{
+			name:          "Return the count of all distinct host addresses in a common IPv4 CIDR",
+			cidr:          IPv4CIDR,
+			expectedCount: big.NewInt(65534),
+		},
+		{
+			name:          "Return the count of all distinct host addresses in a common IPv6 CIDR",
+			cidr:          IPv6CIDR,
+			expectedCount: big.NewInt(4194302),
+		},
+		{
+			name:          "Return the count of all distinct host addresses in an uncommon (large prefix) IPv4 CIDR",
+			cidr:          largeIPv4PrefixCIDR,
+			expectedCount: big.NewInt(2),
+		},
+		{
+			name:          "Return the count of all distinct host addresses in an uncommon (largest prefix) IPv4 CIDR",
+			cidr:          largestIPv4PrefixCIDR,
+			expectedCount: big.NewInt(1),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			count := core.GetHostAddressCount(tt.cidr)
+			assert.Equal(t, tt.expectedCount, count, "Both address counts should be equal")
+		})
+	}
+}
+
 func TestOverlaps(t *testing.T) {
 	firstIPv4CIDR, err := core.ParseCIDR("10.0.0.0/16")
 	if err != nil {
