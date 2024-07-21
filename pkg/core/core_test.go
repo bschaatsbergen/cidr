@@ -40,22 +40,22 @@ func TestGetAddressCount(t *testing.T) {
 		expectedCount *big.Int
 	}{
 		{
-			name:          "Return the count of all distinct host addresses in a common IPv4 CIDR",
+			name:          "Return the count of all addresses in a common IPv4 CIDR",
 			cidr:          IPv4CIDR,
 			expectedCount: big.NewInt(65536),
 		},
 		{
-			name:          "Return the count of all distinct host addresses in a common IPv6 CIDR",
+			name:          "Return the count of all addresses in a common IPv6 CIDR",
 			cidr:          IPv6CIDR,
 			expectedCount: big.NewInt(4194304),
 		},
 		{
-			name:          "Return the count of all distinct host addresses in an uncommon (large prefix) IPv4 CIDR",
+			name:          "Return the count of all addresses in an uncommon (large prefix) IPv4 CIDR",
 			cidr:          largeIPv4PrefixCIDR,
 			expectedCount: big.NewInt(2),
 		},
 		{
-			name:          "Return the count of all distinct host addresses in an uncommon (largest prefix) IPv4 CIDR",
+			name:          "Return the count of all addresses in an uncommon (largest prefix) IPv4 CIDR",
 			cidr:          largestIPv4PrefixCIDR,
 			expectedCount: big.NewInt(1),
 		},

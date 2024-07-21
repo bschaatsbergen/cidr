@@ -18,23 +18,48 @@ func ParseCIDR(network string) (*net.IPNet, error) {
 	return ip, err
 }
 
-// GetAddressCount returns the number of addresses in the given IP network.
-// It considers the network type (IPv4 or IPv6) and handles edge cases for specific prefix lengths.
-// The result excludes the network address and broadcast address.
+// GetAddressCount returns the total number of addresses in the given IP network.
+// It accounts for both IPv4 and IPv6 networks, and handles specific cases for certain prefix lengths.
 func GetAddressCount(network *net.IPNet) *big.Int {
 	prefixLen, bits := network.Mask.Size()
 
-	// Handle edge cases for specific IPv4 prefix lengths.
-	if network.Mask != nil && network.IP.To4() != nil {
+	// Handle specific cases for IPv4 prefix lengths.
+	if network.IP.To4() != nil {
 		switch prefixLen {
 		case 32:
+			// A /32 prefix contains a single address.
 			return big.NewInt(1)
 		case 31:
+			// A /31 prefix is used for point-to-point links and contains two addresses.
 			return big.NewInt(2)
 		}
 	}
 
-	return big.NewInt(0).Lsh(big.NewInt(1), uint(bits-prefixLen))
+	// Calculate the total number of addresses based on the prefix length.
+	return new(big.Int).Lsh(big.NewInt(1), uint(bits-prefixLen))
+}
+
+// GetHostAddressCount returns the number of distinct host addresses in the given IP network.
+// It considers the network type (IPv4 or IPv6) and handles edge cases for specific prefix lengths.
+// The result excludes the network address and the broadcast address, if applicable.
+func GetHostAddressCount(network *net.IPNet) *big.Int {
+	prefixLen, bits := network.Mask.Size()
+
+	// Handle edge cases for specific IPv4 prefix lengths.
+	if network.IP.To4() != nil {
+		switch prefixLen {
+		case 32:
+			// Single IP address for /32 (e.g., point-to-point link).
+			return big.NewInt(1)
+		case 31:
+			// Two IP addresses for /31 (point-to-point link).
+			return big.NewInt(2)
+		}
+	}
+
+	// Calculate the total number of addresses and subtract 2 (network and broadcast addresses).
+	totalAddresses := new(big.Int).Exp(big.NewInt(2), big.NewInt(int64(bits-prefixLen)), nil)
+	return totalAddresses.Sub(totalAddresses, big.NewInt(2))
 }
 
 // ContainsAddress checks if the given IP network contains the specified IP address.

@@ -25,20 +25,20 @@ To get more information on a CIDR range:
 ```
 $ cidr explain 10.0.0.0/16
 Base Address:            10.0.0.0
-Usable Address Range:    10.0.0.1 to 10.0.255.254
+Usable Address Range:    10.0.0.1 to 10.0.255.254 (65,534)
 Broadcast Address:       10.0.255.255
-Address Count:           65,534
+Addresses:               65,536
 Netmask:                 255.255.0.0 (/16 bits)
 ```
 
 This also works with IPv6 CIDR ranges, for example:
 
 ```
-$ cidr explain 2001:db8:1234:1a00::/64
+$ cidr explain 2001:db8:1234:1a00::/110
 Base Address:            2001:db8:1234:1a00::
-Usable Address Range:    2001:db8:1234:1a00:: to 2001:db8:1234:1a00:ffff:ffff:ffff:ffff
-Address Count:           18,446,744,073,709,551,614
-Netmask:                 ffff:ffff:ffff:ffff:: (/64 bits)
+Usable Address Range:    2001:db8:1234:1a00:: to 2001:db8:1234:1a00::3:ffff (262,142)
+Addresses:               262,144
+Netmask:                 ffff:ffff:ffff:ffff:ffff:ffff:fffc:0 (/110 bits)
 ```
 
 ### Check whether an address belongs to a CIDR range
@@ -57,20 +57,20 @@ $ cidr contains 2001:db8:1234:1a00::/106 2001:db8:1234:1a00::
 true
 ```
 
-### Count distinct host addresses
+### Count
 
-To get all distinct host addresses part of a given CIDR range:
+To get a count of all addresses in a CIDR range:
 
 ```
 $ cidr count 10.0.0.0/16
-65534
+65536
 ```
 
 This also works with a IPv6 CIDR range, for example:
 
 ```
 $ cidr count 2001:db8:1234:1a00::/106
-4194302
+4194304
 ```
 
 Or with a large prefix like a point-to-point link CIDR range:
