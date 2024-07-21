@@ -14,7 +14,7 @@ const (
 	countExample = "# Return the count of all addresses within a given IPv4 CIDR range\n" +
 		"cidr count 10.0.0.0/16\n" +
 		"\n" +
-		"# Return the count of all distinct within a given IPv6 CIDR range\n" +
+		"# Return the count of all addresses within a given IPv6 CIDR range\n" +
 		"cidr count 2001:db8:1234:1a00::/106"
 )
 
