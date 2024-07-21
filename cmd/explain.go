@@ -55,6 +55,7 @@ type networkDetailsToDisplay struct {
 	PrefixLength               int
 	BaseAddress                net.IP
 	Count                      string
+	HostCount                  string
 	UsableAddressRangeHasError bool
 	FirstUsableIPAddress       string
 	LastUsableIPAddress        string
@@ -94,6 +95,11 @@ func getNetworkDetails(network *net.IPNet) *networkDetailsToDisplay {
 	// Format the count as a human-readable string and store it in the details struct.
 	details.Count = helper.FormatNumber(count.String())
 
+	// Obtain the total count of distinct host addresses in the network.
+	hostCount := core.GetHostAddressCount(network)
+	// Format the count as a human-readable string and store it in the details struct.
+	details.HostCount = helper.FormatNumber(hostCount.String())
+
 	// Obtain the first and last usable IP addresses, handling errors if they occur.
 	firstUsableIP, err := core.GetFirstUsableIPAddress(network)
 	if err != nil {
@@ -120,17 +126,20 @@ func explain(details *networkDetailsToDisplay) {
 	var lengthIndicator string
 
 	fmt.Printf(color.BlueString("Base Address:\t\t ")+"%s\n", details.BaseAddress)
+
 	if !details.UsableAddressRangeHasError {
-		fmt.Printf(color.BlueString("Usable Address Range:\t ")+"%s to %s\n", details.FirstUsableIPAddress, details.LastUsableIPAddress)
+		fmt.Printf(color.BlueString("Usable Address Range:\t ")+"%s to %s (%s)\n", details.FirstUsableIPAddress, details.LastUsableIPAddress, details.HostCount)
 	} else {
 		fmt.Printf(color.RedString("Usable Address Range:\t ")+"%s\n", "unable to calculate usable address range")
 	}
+
 	if !details.BroadcastAddressHasError && details.IsIPV4Network {
 		fmt.Printf(color.BlueString("Broadcast Address:\t ")+"%s\n", details.BroadcastAddress)
 	} else if details.BroadcastAddressHasError && details.IsIPV4Network {
 		fmt.Printf(color.RedString("Broadcast Address:\t ")+"%s\n", details.BroadcastAddress)
 	}
-	fmt.Printf(color.BlueString("Host Addresses:\t\t ")+"%s\n", details.Count)
+
+	fmt.Printf(color.BlueString("Addresses:\t\t ")+"%s\n", details.Count)
 
 	if details.PrefixLength > 1 {
 		lengthIndicator = "bits"
