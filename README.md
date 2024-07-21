@@ -1,7 +1,7 @@
 # cidr
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/bschaatsbergen/cidr) [![Go Reference](https://pkg.go.dev/badge/github.com/bschaatsbergen/cidr.svg)](https://pkg.go.dev/github.com/bschaatsbergen/cidr)
 
-CLI to perform various actions on CIDR ranges
+Simplifies IPv4/IPv6 management with counting, overlap checking, explanation, and subdivision
 
 ## Brew
 To install cidr using brew, simply run:
