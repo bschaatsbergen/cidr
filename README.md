@@ -3,18 +3,18 @@
 
 Simplifies IPv4/IPv6 CIDR network prefix management with counting, overlap checking, explanation, and subdivision.
 
-## Debian (Trixie and newer) & Ubuntu (Oracular and newer)
-To install cidr using apt, simply run:
-
-```sh
-apt install cidr
-```
-
 ## Brew
 To install cidr using brew, simply run:
 
 ```sh
 brew install cidr
+```
+
+## Debian (Trixie and newer) & Ubuntu (Oracular and newer)
+To install cidr using apt, simply run:
+
+```sh
+apt install cidr
 ```
 
 ## Binaries
