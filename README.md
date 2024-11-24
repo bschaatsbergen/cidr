@@ -3,7 +3,7 @@
 
 Simplifies IPv4/IPv6 CIDR network prefix management with counting, overlap checking, explanation, and subdivision.
 
-## Debian & Ubuntu
+## Debian (Trixie and newer) & Ubuntu (Oracular and newer)
 To install cidr using apt, simply run:
 
 ```sh
