@@ -5,7 +5,7 @@ import (
 	"net"
 	"testing"
 
-	"github.com/bschaatsbergen/cidr/pkg/core"
+	"github.com/bschaatsbergen/cidr/internal/core"
 	"github.com/stretchr/testify/assert"
 )
 

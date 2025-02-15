@@ -20,7 +20,7 @@ linters:
     - decorder
     - dogsled
     - errcheck
-    - exportloopref
+    - copyloopvar
     - forcetypeassert
     - funlen
     - godot
@@ -34,7 +34,7 @@ linters:
     - nilerr
     - predeclared
     - staticcheck
-    - tenv
+    -  usetesting
     - unconvert
     - unparam
     - unused
