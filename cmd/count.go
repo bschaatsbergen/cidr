@@ -6,7 +6,7 @@ import (
 	"net"
 	"os"
 
-	"github.com/bschaatsbergen/cidr/pkg/core"
+	"github.com/bschaatsbergen/cidr/internal/core"
 	"github.com/spf13/cobra"
 )
 

@@ -3,7 +3,7 @@ package helper_test
 import (
 	"testing"
 
-	"github.com/bschaatsbergen/cidr/pkg/helper"
+	"github.com/bschaatsbergen/cidr/internal/helper"
 )
 
 func TestContainsInt(t *testing.T) {

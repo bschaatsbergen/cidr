@@ -6,7 +6,7 @@ import (
 	"math/big"
 	"net"
 
-	"github.com/bschaatsbergen/cidr/pkg/helper"
+	"github.com/bschaatsbergen/cidr/internal/helper"
 )
 
 // ParseCIDR parses the given CIDR notation string and returns the corresponding IP network.
