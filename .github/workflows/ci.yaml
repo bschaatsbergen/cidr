@@ -18,7 +18,7 @@ jobs:
       - name: Build
         run: go build -v ./...
       - name: Run linters
-        uses: golangci/golangci-lint-action@2e788936b09dd82dc280e845628a40d2ba6b204c
+        uses: golangci/golangci-lint-action@4696ba8babb6127d732c3c6dde519db15edab9ea
         with:
           version: latest
           skip-pkg-cache: true
