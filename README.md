@@ -17,6 +17,15 @@ To install cidr using apt, simply run:
 apt install cidr
 ```
 
+## Source
+To install cidr from source, simply run:
+
+```sh
+git clone https://github.com/bschaatsbergen/cidr.git
+cd cidr
+go install .
+```
+
 ## Binaries
 You can download the [latest binary](https://github.com/bschaatsbergen/cidr/releases/latest) for Linux, MacOS, and Windows.
 
