@@ -4,7 +4,7 @@ go 1.23.6
 
 require (
 	github.com/fatih/color v1.18.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 )
 
 require (
